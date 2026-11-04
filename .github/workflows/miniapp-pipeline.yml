@@ -98,7 +98,7 @@ jobs:
             https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz
           tar -xzf gitleaks.tar.gz gitleaks
       - run: |
-          ./gitleaks detect --source . --redact \
+          ./gitleaks detect --source . --redact --config .gitleaks.toml \
             --report-format sarif --report-path gitleaks.sarif --exit-code 1
       - name: publicar SARIF no Security tab
         if: always()
