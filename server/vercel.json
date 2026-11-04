@@ -1,0 +1,32 @@
+{
+ "crons": [
+  {
+   "path": "/api/cron/resumo",
+   "schedule": "0 20 * * *"
+  },
+  {
+   "path": "/api/cron/domingo",
+   "schedule": "0 23 * * 0"
+  },
+  {
+   "path": "/api/cron/regua?passo=quase-faixa",
+   "schedule": "0 12 * * *"
+  },
+  {
+   "path": "/api/cron/regua?passo=7-dias",
+   "schedule": "0 15 * * *"
+  },
+  {
+   "path": "/api/cron/regua?passo=3-dias",
+   "schedule": "0 21 * * *"
+  },
+  {
+   "path": "/api/cron/regua?passo=campanha-lembrete",
+   "schedule": "5 12 * * *"
+  },
+  {
+   "path": "/api/cron/regua?passo=campanha-ultima",
+   "schedule": "0 23 * * *"
+  }
+ ]
+}

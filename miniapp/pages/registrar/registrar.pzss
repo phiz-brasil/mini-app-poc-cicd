@@ -1,0 +1,48 @@
+.tela-b { min-height: 100vh; background: #F2F2EF; }
+.cam { position: relative; margin: 0 40rpx; height: 640rpx; border-radius: 40rpx; overflow: hidden; background: #FFFFFF; color: #111111; }
+.cam-img { width: 100%; height: 100%; }
+.cam-vazia { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48rpx; text-align: center; }
+.cam-ic { width: 84rpx; height: 84rpx; }
+.cam-tit { margin-top: 24rpx; font-family: "Unbounded", "Poppins", sans-serif; font-weight: 800; font-size: 42rpx; letter-spacing: -1.2rpx; }
+.cam-tx { margin-top: 8rpx; font-size: 28rpx; color: #7A7A76; }
+.cam-pe { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; padding: 28rpx; }
+.cam-tag { height: 60rpx; line-height: 60rpx; padding: 0 24rpx; border-radius: 999rpx; background: rgba(17,17,17,.72); color: #FFFFFF; font-size: 26rpx; }
+.cam-disparo { width: 132rpx; height: 132rpx; border-radius: 999rpx; border: 8rpx solid #111111; padding: 8rpx; box-sizing: border-box; }
+.cam-disparo-in { width: 100%; height: 100%; border-radius: 999rpx; background: #111111; }
+.cam-refazer { height: 68rpx; line-height: 68rpx; padding: 0 28rpx; border-radius: 999rpx; background: #111111; color: #FFFFFF; font-weight: 600; font-size: 28rpx; }
+.stepper { margin: 0 40rpx; height: 120rpx; padding: 0 12rpx; border-radius: 999rpx; background: #FFFFFF; display: flex; align-items: center; justify-content: space-between; }
+.stepper-b { width: 96rpx; height: 96rpx; border-radius: 999rpx; background: #EDEDEA; color: #111111; display: flex; align-items: center; justify-content: center; font-size: 46rpx; }
+.stepper-v { font-family: "Unbounded", "Poppins", sans-serif; font-weight: 800; font-size: 46rpx; letter-spacing: -1.2rpx; color: #111111; }
+.tp-press { opacity: .6; }
+.cam-rec { color: #111111; line-height: 40rpx; }
+
+/* Zoeira da foto recusada: folha limão que pula por cima de tudo */
+.zo { position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 60; display: flex; align-items: flex-end; }
+.zo-fundo { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background: rgba(17,17,17,.55); animation: zo-in .2s both; }
+.zo-card { position: relative; width: 100%; padding: 56rpx 48rpx 72rpx; border-radius: 56rpx 56rpx 0 0; background: #C6F432; display: flex; flex-direction: column; align-items: center; text-align: center; animation: zo-sobe .45s cubic-bezier(.2,1.4,.4,1) both; }
+.zo-emoji { font-size: 150rpx; line-height: 170rpx; animation: zo-mexe 1s .35s ease-in-out 2; }
+.zo-tit { margin-top: 20rpx; font-family: "Unbounded", "Poppins", sans-serif; font-weight: 800; font-size: 52rpx; line-height: 62rpx; letter-spacing: -1.6rpx; text-transform: uppercase; color: #111111; }
+.zo-tx { margin-top: 20rpx; font-size: 30rpx; line-height: 42rpx; color: #2B3A0A; }
+.zo-btn { width: 100%; margin-top: 48rpx; }
+.zo-nao { margin-top: 12rpx; height: 80rpx; display: flex; align-items: center; font-weight: 600; font-size: 28rpx; color: #3A4A10; }
+@keyframes zo-in { from { opacity: 0; } }
+@keyframes zo-sobe { from { transform: translateY(100%); } }
+@keyframes zo-mexe { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-14deg); } 40% { transform: rotate(12deg); } 60% { transform: rotate(-8deg); } 80% { transform: rotate(5deg); } }
+
+/* Tipos de treino: grade de 2 colunas, ícone na frente */
+.tps { display: flex; flex-wrap: wrap; justify-content: space-between; margin: 0 40rpx; }
+.tp-t { width: 325rpx; height: 104rpx; margin-bottom: 16rpx; padding: 0 20rpx 0 16rpx; box-sizing: border-box; border-radius: 32rpx; background: #FFFFFF;
+  box-shadow: 0 4rpx 14rpx rgba(17,17,17,.05); display: flex; align-items: center; transition: background .15s, transform .15s; }
+.tp-ic { width: 72rpx; height: 72rpx; border-radius: 22rpx; background: #F2F2EF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tp-ic image { width: 42rpx; height: 42rpx; }
+.tp-l { margin-left: 18rpx; font-weight: 600; font-size: 28rpx; color: #111111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tp-t.on { background: #C6F432; box-shadow: 0 10rpx 24rpx rgba(150,190,20,.35); transform: scale(1.02); }
+.tp-t.on .tp-ic { background: rgba(255,255,255,.55); }
+
+/* Quem pode ver */
+.quem { display: flex; flex-wrap: wrap; margin: 0 40rpx; }
+.qm { display: flex; align-items: center; height: 72rpx; padding: 0 26rpx 0 14rpx; margin: 0 12rpx 12rpx 0; border-radius: 999rpx; background: #FFFFFF; box-shadow: 0 4rpx 14rpx rgba(17,17,17,.05); font-weight: 600; font-size: 26rpx; color: #7A7A76; }
+.qm.on { color: #111111; }
+.qm-ck { width: 40rpx; height: 40rpx; margin-right: 10rpx; border-radius: 999rpx; background: #EDEDEA; display: flex; align-items: center; justify-content: center; }
+.qm.on .qm-ck { background: #C6F432; }
+.qm-ck image { width: 24rpx; height: 24rpx; }

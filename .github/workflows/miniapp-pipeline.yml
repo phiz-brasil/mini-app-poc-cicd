@@ -1,0 +1,146 @@
+# ---------------------------------------------------------------------------
+# Esteira do momento 1 (POC) — build + qualidade + segurança em push/PR.
+#
+# Perfis da RFC que já existem aqui:
+#   · qualidade: phiz:check (regras da casa), typecheck do server
+#   · segurança: CodeQL (SAST), gitleaks (secrets), npm audit (SCA)
+#   · SonarQube Cloud: job opcional — ativa sozinho quando os secrets
+#     SONAR_TOKEN forem configurados (ver README, seção Sonar).
+#
+# Na produção (miniapp-ci reusable workflow), os scanners trocam para a
+# stack paga (Snyk); aqui usamos a variante free da POC (seção 1b do plano).
+# ---------------------------------------------------------------------------
+
+name: miniapp-pipeline
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write   # CodeQL e gitleaks publicam SARIF no Security tab
+  actions: read
+
+env:
+  # Sonar só roda quando o secret SONAR_TOKEN existir (POC: começa desligado)
+  SONAR_ENABLED: ${{ secrets.SONAR_TOKEN != '' }}
+
+jobs:
+  # ------------------------------------------------------------- regressão
+  phiz-rules:
+    name: quality / phiz-rules
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Regressão das próprias regras: mutações ruins DEVEM falhar,
+      # exemplos validados DEVEM passar (exigência da RFC).
+      - run: bash tools/phiz-check/test/run-tests.sh
+
+  # ------------------------------------------------------------- miniapp
+  miniapp:
+    name: quality / miniapp
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node tools/phiz-check/phiz-check.js miniapp --profile miniapp
+
+  # ------------------------------------------------------------- server
+  server:
+    name: quality / server
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+        working-directory: server
+      - run: npm run typecheck
+        working-directory: server
+      - run: node tools/phiz-check/phiz-check.js server --profile server
+
+  # ------------------------------------------------------------- SAST
+  codeql:
+    name: security / codeql
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+      - uses: github/codeql-action/autobuild@v3
+      - uses: github/codeql-action/analyze@v3
+
+  # ------------------------------------------------------------- secrets
+  secrets:
+    name: security / secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # gitleaks varre o histórico de commits também
+      # Binário OSS direto das releases (a action oficial exige licença paga
+      # em repos de organização). TODO produção: fixar por checksum.
+      - run: |
+          curl -sSL -o gitleaks.tar.gz \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz
+          tar -xzf gitleaks.tar.gz gitleaks
+      - run: |
+          ./gitleaks detect --source . --redact \
+            --report-format sarif --report-path gitleaks.sarif --exit-code 1
+      - name: publicar SARIF no Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gitleaks.sarif
+
+  # ------------------------------------------------------------- SCA
+  sca-server:
+    name: security / sca-server
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+        working-directory: server
+      # Política RFC: critical/high = BLOCK, medium = WARN. npm audit não
+      # separa os dois níveis; na POC o BLOCK começa em high.
+      - run: npm audit --audit-level=high
+        working-directory: server
+
+  # ------------------------------------------------------------- Sonar
+  sonar:
+    name: quality / sonar
+    if: env.SONAR_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Sonar usa o histórico para "new code"
+      - uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # O gate da organização é avaliado no SonarCloud; quando ativarmos o
+      # bloqueio no PR, adicionar sonarqube-quality-gate-action aqui.

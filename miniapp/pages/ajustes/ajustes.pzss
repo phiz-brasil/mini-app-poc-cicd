@@ -1,0 +1,23 @@
+.tela-b { min-height: 100vh; background: #F2F2EF; }
+.campo { margin: 0 40rpx; height: 112rpx; padding: 0 32rpx; border-radius: 40rpx; background: #FFFFFF; display: flex; align-items: center; }
+.campo-in { flex: 1; font-size: 34rpx; color: #111111; }
+.lc { display: flex; align-items: center; min-height: 136rpx; margin: 0 16rpx; padding: 16rpx 24rpx; border-radius: 32rpx; }
+.lc-tx { flex: 1; display: flex; flex-direction: column; margin-right: 24rpx; }
+.lc-b { font-weight: 600; font-size: 32rpx; line-height: 42rpx; color: #111111; }
+.lc-s { font-size: 25rpx; line-height: 34rpx; color: #7A7A76; }
+.lc-s.ok { color: #111111; }
+.marca { width: 84rpx; height: 84rpx; border-radius: 24rpx; margin-right: 24rpx; flex-shrink: 0; }
+.pilula, button.pilula:not([size='mini']) { height: 68rpx; line-height: 68rpx; padding: 0 30rpx; border-radius: 999rpx; background: #111111; color: #FFFFFF; font-weight: 600; font-size: 26rpx; flex-shrink: 0; }
+.pilula.sec { background: #EDEDEA; color: #111111; }
+.sair { margin: 64rpx 40rpx 0; height: 96rpx; display: flex; align-items: center; justify-content: center; color: #E5484D; font-weight: 600; font-size: 32rpx; }
+.lc-link { align-self: flex-start; margin-top: 6rpx; font-size: 24rpx; font-weight: 500; color: #A5A5A0; text-decoration: underline; }
+/* Selo ON do conectado */
+.on { height: 64rpx; padding: 0 22rpx 0 18rpx; border-radius: 999rpx; background: #C6F432; display: flex; align-items: center; flex-shrink: 0; }
+.on-dot { width: 16rpx; height: 16rpx; border-radius: 999rpx; background: #111111; margin-right: 10rpx; animation: pisca 1.6s ease-in-out infinite; }
+.on text { font-family: "Unbounded", "Poppins", sans-serif; font-weight: 800; font-size: 24rpx; letter-spacing: 1rpx; color: #111111; }
+@keyframes pisca { 50% { opacity: .35; } }
+.apagar { display: block; margin: 8rpx auto 24rpx; padding: 16rpx; font-size: 26rpx; font-weight: 500; color: #A5A5A0; text-align: center; }
+.versao { display: block; margin: 8rpx 0 64rpx; font-size: 22rpx; color: #A5A5A0; text-align: center; }
+.st-btn { display: block; width: 474rpx; height: 96rpx; margin: 4rpx 0 12rpx 40rpx; }
+.st-pw { display: block; width: 274rpx; height: 28rpx; margin: 0 0 16rpx 40rpx; opacity: .8; }
+.st-nav { display: block; margin: 0 0 16rpx 40rpx; font-size: 24rpx; font-weight: 600; color: #7A7A76; text-decoration: underline; }

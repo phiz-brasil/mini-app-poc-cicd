@@ -1,0 +1,27 @@
+.cm { min-height: 100vh; background: #F2F2EF; }
+.cm-topo { position: relative; padding: 0 40rpx 8rpx; }
+.cm-icone { display: block; width: 168rpx; height: 168rpx; margin-top: 32rpx; border-radius: 52rpx; box-shadow: 0 24rpx 60rpx rgba(17,17,17,.12); animation: entra .7s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes entra { from { transform: scale(.4) rotate(-12deg); opacity: 0; } }
+.cm-oi { display: block; margin-top: 40rpx; font-family: "Unbounded", "Poppins", sans-serif; font-weight: 800; font-size: 60rpx; line-height: 72rpx; letter-spacing: -2rpx; color: #111111; }
+.cm-tx { display: block; margin-top: 16rpx; font-size: 32rpx; line-height: 46rpx; color: #6A6A66; }
+
+.cm-lista { margin: 0 16rpx; }
+.cm-l { display: flex; align-items: center; min-height: 136rpx; padding: 12rpx 24rpx; border-radius: 32rpx; }
+.cm-l-ic { width: 88rpx; height: 88rpx; border-radius: 24rpx; flex-shrink: 0; }
+.cm-l-tx { flex: 1; min-width: 0; margin-left: 24rpx; display: flex; flex-direction: column; }
+.cm-l-b { font-weight: 600; font-size: 32rpx; line-height: 42rpx; color: #111111; }
+.cm-l-s { font-size: 25rpx; line-height: 34rpx; color: #7A7A76; }
+.cm-l-s.ok { color: #111111; }
+.cm-btn { height: 68rpx; line-height: 68rpx; padding: 0 30rpx; border-radius: 999rpx; background: #111111; color: #FFFFFF; font-weight: 600; font-size: 26rpx; flex-shrink: 0; }
+.cm-btn.sec { background: #EDEDEA; color: #111111; }
+
+.on { height: 64rpx; padding: 0 22rpx 0 18rpx; border-radius: 999rpx; background: #C6F432; display: flex; align-items: center; flex-shrink: 0; }
+.on-dot { width: 16rpx; height: 16rpx; border-radius: 999rpx; background: #111111; margin-right: 10rpx; animation: pisca 1.6s ease-in-out infinite; }
+.on text { font-family: "Unbounded", "Poppins", sans-serif; font-weight: 800; font-size: 24rpx; letter-spacing: 1rpx; color: #111111; }
+@keyframes pisca { 50% { opacity: .35; } }
+
+.st-btn { display: block; width: 474rpx; height: 96rpx; margin: 0 0 12rpx 24rpx; }
+.st-nav { display: block; margin: 0 0 16rpx 24rpx; font-size: 24rpx; font-weight: 600; color: #7A7A76; text-decoration: underline; }
+.st-btn.carregando { opacity: .5; }
+.cm-dica { display: block; margin: 24rpx 40rpx 0; font-size: 26rpx; line-height: 36rpx; color: #7A7A76; }
+.btn.indo { opacity: .7; }

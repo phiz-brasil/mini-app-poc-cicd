@@ -1,0 +1,481 @@
+<view class="tela">
+  <!-- Header fixo (estilo Apple): + à esquerda, logo no centro, cápsula do PhizChat à direita.
+       Rolou a página: vira vidro (translúcido e borrado). -->
+  <view class="hd {{rolou ? 'vidro' : ''}}" wx:if="{{!carregando}}" style="padding-top: {{barTop}}px; height: {{barH}}px">
+    <view class="hd-vidro"></view>
+    <view class="hd-mais {{menu ? 'on' : ''}}" style="width: {{barH}}px; height: {{barH}}px" bindtap="alternarMenu" hover-class="tp-press">
+      <image src="{{ic.MAIS_PRETO}}" mode="aspectFit"></image>
+    </view>
+    <image class="hd-logo" src="/images/logo-claro.png" mode="heightFix"></image>
+  </view>
+
+  <!-- Menu do +: Atividade e Moments -->
+  <view class="mn" wx:if="{{menu}}" catchtouchmove="nada">
+    <view class="mn-fundo" bindtap="fecharMenu"></view>
+    <view class="mn-card" style="top: {{barTop + barH + 10}}px">
+      <view class="mn-i" bindtap="menuAtividade" hover-class="mn-press">
+        <view class="mn-ic limao"><image src="{{ic.ATIVIDADE}}" mode="aspectFit"></image></view>
+        <view class="mn-tx"><text class="mn-b">Atividade</text><text class="mn-s">Registrar treino com foto</text></view>
+      </view>
+      <view class="mn-l"></view>
+      <view class="mn-i" bindtap="menuGrupo" hover-class="mn-press">
+        <view class="mn-ic preto"><image src="{{ic.GRUPO_LIMAO}}" mode="aspectFit"></image></view>
+        <view class="mn-tx"><text class="mn-b">Grupo</text><text class="mn-s">Crie um grupo e desafie seus amigos</text></view>
+      </view>
+      <view class="mn-l"></view>
+      <view class="mn-i" bindtap="menuMoments" hover-class="mn-press">
+        <view class="mn-ic violeta"><image src="{{ic.MOMENTS}}" mode="aspectFit"></image></view>
+        <view class="mn-tx"><text class="mn-b">Moments</text><text class="mn-s">Poste o Tá Pago! nas suas redes</text></view>
+      </view>
+      <view class="mn-l"></view>
+      <view class="mn-i" bindtap="menuCodigo" hover-class="mn-press">
+        <view class="mn-ic cinza"><image src="{{ic.CODIGO_PRETO}}" mode="aspectFit"></image></view>
+        <view class="mn-tx"><text class="mn-b">Tenho um código</text><text class="mn-s">Entrar num grupo com o convite</text></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Cabeçalho: foto + olá -->
+  <view class="cab" wx:if="{{!carregando}}" style="padding-top: {{barTop + barH + 24}}px">
+    <view class="ola">
+      <view class="ola-eu" bindtap="abrirEu" hover-class="tp-press">
+      <view class="enf-w">
+        <image wx:if="{{euAvatar}}" class="ola-av" src="{{euAvatar}}" mode="aspectFill"></image>
+        <view wx:else class="ola-av letra" style="background: {{euCor}}"><text>{{euIni}}</text></view>
+        <image wx:if="{{enf}}" class="enf" src="{{enf.imagem}}" mode="widthFix" style="left: {{enf.x}}%; top: {{enf.y}}%; width: {{enf.w}}%"></image>
+      </view>
+      <view class="ola-tx">
+        <text class="ola-s">{{saudacao}}</text>
+        <view class="tx-l" wx:if="{{primeiro}}"><text class="ola-n">{{primeiro}}</text><image wx:if="{{euVerificado}}" class="selo" src="{{ic.SELO}}" mode="aspectFit"></image></view>
+      </view>
+      </view>
+      <view class="aj" bindtap="abrirAjustes" hover-class="tp-press"><image src="{{ic.AJUSTES}}" mode="aspectFit"></image></view>
+    </view>
+    <text class="titulo" wx:if="{{titulo}}">{{titulo}}</text>
+  </view>
+
+  <!-- Abertura (só na primeira vez): símbolo se desenha, logo, frases e barra -->
+  <view class="sp" wx:if="{{carregando}}">
+    <view class="sp-sim">
+      <view class="sp-check"><image src="/images/check.png" mode="aspectFit"></image></view>
+    </view>
+    <image class="sp-logo" src="/images/logo-claro.png" mode="heightFix"></image>
+    <text class="sp-frase">{{frase}}</text>
+    <view class="sp-barra"><view class="sp-barra-in"></view></view>
+  </view>
+
+  <view class="estado" wx:elif="{{erro}}">
+    <text class="titulo-p">Não deu pra abrir</text>
+    <text class="estado-tx">{{erro}}</text>
+    <view class="btn estado-btn" bindtap="tentarDeNovo" hover-class="btn-press">Tentar de novo</view>
+  </view>
+
+  <block wx:else>
+    <!-- Faixa do tema do dia (campanha): vem do servidor -->
+    <view class="tm-faixa" wx:if="{{tema.faixa}}" bindtap="abrirFaixa" hover-class="tp-press" style="box-shadow: inset 0 0 0 3rpx {{tema.cor}}">
+      <image wx:if="{{tema.faixa.imagem}}" class="tm-faixa-img" src="{{tema.faixa.imagem}}" mode="aspectFit"></image>
+      <view class="tm-faixa-tx"><text class="tm-faixa-t">{{tema.faixa.titulo}}</text><text class="tm-faixa-s">{{tema.faixa.texto}}</text></view>
+    </view>
+    <!-- Filtro: Todos + grupos -->
+    <scroll-view class="filtro" scroll-x enable-flex>
+      <view class="pilula {{grupo === '' ? 'on' : ''}}" data-id="" bindtap="trocarGrupo">Geral</view>
+      <view wx:for="{{grupos}}" wx:key="id" class="pilula {{grupo === item.id ? 'on' : ''}}" data-id="{{item.id}}" bindtap="trocarGrupo">{{item.nome}}</view>
+      <view class="pilula novo" bindtap="novoGrupo" hover-class="tp-press"><image src="{{ic.MAIS_PRETO}}" mode="aspectFit"></image><text>Crie um grupo</text></view>
+    </scroll-view>
+
+    <!-- O dia: foto do último treino ao fundo + brilho limão, número gigante -->
+    <!-- Ainda não treinou hoje: chamada pra treinar -->
+    <view class="dia ch {{tm.img ? 'ilu' : ''}}" wx:if="{{chamada}}" style="{{tm.card}}">
+      <image wx:if="{{tm.img}}" class="dia-ilu" src="{{tm.img}}" mode="widthFix"></image>
+      <view class="dia-in">
+        <view class="ch-topo">
+          <text class="dia-r" style="{{tm.apoio}}">Hoje ainda não tá pago</text>
+          <view class="ch-seq" wx:if="{{chamada.seq >= 2}}"><text>🔥 {{chamada.seq}}</text></view>
+        </view>
+        <text class="ch-t" style="{{tm.tinta}}">{{chamada.titulo}}</text>
+        <text class="ch-s" style="{{tm.apoio}}">{{chamada.sub}}</text>
+        <view class="seg-sem">
+          <view wx:for="{{semana}}" wx:key="index" class="sem-i {{item.ok ? 'ok' : ''}} {{item.hoje ? 'hoje' : ''}}">
+            <view class="sem-b" style="{{item.ok ? tm.barraOn : tm.barra}}"></view>
+            <text class="sem-l" style="{{tm.apoio}}">{{item.d}}</text>
+          </view>
+        </view>
+        <view class="ch-btn" bindtap="registrar" hover-class="btn-press" style="{{tm.botao}}"><image src="{{ic.MAIS_BRANCO}}" mode="aspectFit"></image><text style="{{tm.botaoTx}}">Registrar treino</text></view>
+        <text class="ch-st" style="{{tm.apoio}}" wx:if="{{chamada.strava}}">Com o Strava ligado, o treino entra sozinho</text>
+      </view>
+    </view>
+
+    <view class="dia" wx:else bindtap="irRanking" style="{{tm.card}}">
+      <image wx:if="{{tm.img}}" class="dia-ilu" src="{{tm.img}}" mode="widthFix"></image>
+      <view class="dia-in">
+        <text class="dia-r" style="{{tm.apoio}}">{{etiquetaDia}}</text>
+        <view class="dia-pos">
+          <text class="num dia-pos-n" style="{{tm.tinta}}">{{posN}}</text>
+          <view class="dia-pos-l">
+            <text class="rotulo" style="{{tm.tinta}}">º lugar</text>
+            <text class="dia-pos-de" style="{{tm.apoio}}">{{foraDoGeral ? "fora do ranking geral" : "de " + total + " · " + euValor}}</text>
+          </view>
+        </view>
+        <view class="seg-sem">
+          <view wx:for="{{semana}}" wx:key="index" class="sem-i {{item.ok ? 'ok' : ''}} {{item.hoje ? 'hoje' : ''}}">
+            <view class="sem-b" style="{{item.ok ? tm.barraOn : tm.barra}}"></view>
+            <text class="sem-l" style="{{tm.apoio}}">{{item.d}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Quem já treinou hoje: rostos, estilo stories -->
+    <view class="rs-cab">
+      <text class="rs-t">Já treinaram hoje</text>
+      <text class="rs-n" wx:if="{{rostos.length}}">{{rostos.length}}</text>
+    </view>
+    <scroll-view class="rs {{enf ? 'rs-enf' : ''}}" scroll-x enable-flex>
+      <view class="rs-i" bindtap="rostoEu" hover-class="tp-press">
+        <view class="rs-anel {{euTreinou ? 'ok' : 'eu'}}">
+          <image wx:if="{{euAvatar}}" class="rs-av" src="{{euAvatar}}" mode="aspectFill"></image>
+          <view wx:else class="rs-av" style="background: {{euCor}}"><text>{{euIni}}</text></view>
+          <image wx:if="{{enf}}" class="enf" src="{{enf.imagem}}" mode="widthFix" style="left: {{enf.x}}%; top: {{enf.y}}%; width: {{enf.w}}%"></image>
+        </view>
+        <view class="rs-badge {{euTreinou ? '' : 'rs-add'}}"><image src="{{euTreinou ? ic.CHECK_PRETO : ic.MAIS_BRANCO}}" mode="aspectFit"></image></view>
+        <text class="rs-nome">Você</text>
+      </view>
+      <view class="rs-i" wx:for="{{rostos}}" wx:key="uid" data-i="{{index}}" bindtap="verRosto" hover-class="tp-press">
+        <view class="rs-anel ok">
+          <image wx:if="{{item.avatar}}" class="rs-av" src="{{item.avatar}}" mode="aspectFill"></image>
+          <view wx:else class="rs-av" style="background: {{item.cor}}"><text>{{item.ini}}</text></view>
+          <image wx:if="{{enf}}" class="enf" src="{{enf.imagem}}" mode="widthFix" style="left: {{enf.x}}%; top: {{enf.y}}%; width: {{enf.w}}%"></image>
+        </view>
+        <view class="rs-badge"><image src="{{ic.CHECK_PRETO}}" mode="aspectFit"></image></view>
+        <text class="rs-nome">{{item.nome}}</text>
+      </view>
+      <view class="rs-vazio" wx:if="{{!rostos.length}}"><text>Ninguém treinou ainda hoje. O primeiro tá pago é seu 🔥</text></view>
+    </scroll-view>
+
+    <!-- Sem grupo ainda: chamada pra criar um e competir com os amigos -->
+    <view class="cg" wx:if="{{!grupos.length}}">
+      <view class="cg-topo">
+        <view class="cg-ic"><image src="{{ic.GRUPO_PRETO}}" mode="aspectFit"></image></view>
+        <view class="cg-tx">
+          <text class="cg-t">Crie seu grupo</text>
+          <text class="cg-s">Chame seus amigos e façam uma competição. Quem treinar mais na semana leva o troféu 🏆</text>
+        </view>
+      </view>
+      <view class="cg-pe">
+        <view class="cg-btn" bindtap="novoGrupo" hover-class="btn-press"><image src="{{ic.MAIS_BRANCO}}" mode="aspectFit"></image><text>Criar grupo</text></view>
+        <view class="cg-cod" bindtap="entrarComCodigo">Tenho um código</view>
+      </view>
+    </view>
+
+    <!-- Convite pra grupo feito por um amigo do PhizChat -->
+    <view class="cvt" wx:if="{{convite}}">
+      <text class="cvt-e">💌</text>
+      <view class="cvt-tx"><text class="cvt-b">{{convite.de}} te convidou pro {{convite.grupo}}</text><text class="cvt-s">{{convite.membros}} {{convite.membros === 1 ? "pessoa" : "pessoas"}} treinando</text></view>
+      <view class="cvt-nao" data-sim="0" bindtap="responderConvite">Agora não</view>
+      <view class="cvt-sim" data-sim="1" bindtap="responderConvite" hover-class="btn-press">Entrar</view>
+    </view>
+
+    <!-- Alguém te cutucou hoje e você ainda não treinou -->
+    <view class="cutucou" wx:if="{{cutucarOn && cutucou}}" bindtap="registrar" hover-class="btn-press">
+      <text class="cutucou-e">👀</text>
+      <view class="stc-tx"><text class="cutucou-b">{{cutucou}}</text><text class="cutucou-s">Bora mostrar serviço? Registra o treino de hoje</text></view>
+    </view>
+
+    <!-- Treino do Strava esperando: foto ou post -->
+    <view class="stc" wx:if="{{stCard}}" bindtap="reabrirStrava" hover-class="btn-press">
+      <image class="fl-st" src="{{marcas.STRAVA}}" mode="aspectFit"></image>
+      <view class="stc-tx"><text class="stc-b">{{stCard.titulo}} chegou do Strava</text><text class="stc-s">{{stCard.pendente ? "Tira uma foto pra valer ponto" : stCard.linha + " · postar no Moments?"}}</text></view>
+      <view class="seta-b"><image class="seta" src="{{ic.SETA_BRANCA}}" mode="aspectFit"></image></view>
+    </view>
+
+    <!-- Dois cartões: números + registrar -->
+    <view class="grade">
+      <view class="card">
+        <text class="card-r">Hoje</text>
+        <view class="card-num"><text class="num n-grande">{{ptsHoje}}</text><text class="n-un">pts</text></view>
+        <text class="card-s">{{minHoje}} min · {{seqN}} {{seqN === 1 ? "dia seguido" : "dias seguidos"}}</text>
+      </view>
+      <view class="card" bindtap="abrirEu" hover-class="btn-press">
+        <text class="card-r">Semana</text>
+        <view class="card-num"><text class="num n-grande">{{ptsSemana}}</text><text class="n-un">pts</text></view>
+        <text class="card-s">{{treinosSemana}} {{treinosSemana === 1 ? "treino" : "treinos"}} na semana</text>
+      </view>
+    </view>
+
+    <!-- Grupo escolhido: convidar -->
+    <view class="grupo" wx:if="{{grupoAtual}}">
+      <view class="grupo-tx"><text class="grupo-n">{{grupoAtual.nome}}</text><text class="grupo-s">Conta {{grupoComo}} · {{grupoAtual.membros}} {{grupoAtual.membros === 1 ? "pessoa" : "pessoas"}}</text></view>
+      <view class="mini-btn esc" bindtap="copiarConvite">Copiar</view>
+      <button class="mini-btn" open-type="share">Convidar</button>
+    </view>
+
+    <!-- Ranking: Geral (da vida toda) primeiro; compacto, expande -->
+    <view class="sec-cab" id="ranking">
+      <text class="sec-t">Ranking</text>
+      <view class="seg">
+        <view class="seg-th" style="transform: translateX({{aba === 'semana' ? 128 : aba === 'mes' ? 256 : 0}}rpx)"></view>
+        <view class="seg-i {{aba === 'total' ? 'on' : ''}}" data-aba="total" bindtap="trocarAba">Geral</view>
+        <view class="seg-i {{aba === 'semana' ? 'on' : ''}}" data-aba="semana" bindtap="trocarAba">Semana</view>
+        <view class="seg-i {{aba === 'mes' ? 'on' : ''}}" data-aba="mes" bindtap="trocarAba">Mês</view>
+      </view>
+    </view>
+
+    <view class="caixa {{rkTroca ? 'rk-sai' : 'rk-volta'}}">
+      <view class="vazio" wx:if="{{foraDoGeral}}">
+        <text class="vazio-t">Você está fora do ranking geral.</text>
+        <view class="mini-btn" bindtap="abrirAjustes">Entrar</view>
+      </view>
+      <view class="vazio" wx:elif="{{sozinho}}">
+        <text class="vazio-t">Só você por aqui ainda.</text>
+        <button class="mini-btn" open-type="share">Chamar alguém</button>
+      </view>
+      <view class="linha {{item.eu ? 'eu' : ''}} {{item.sep ? 'sep' : ''}} {{rkAnim ? 'rk-entra' : ''}}" style="animation-delay: {{index * 0.045}}s" wx:for="{{listaVisivel}}" wx:key="uid" data-uid="{{item.uid}}" data-eu="{{item.eu}}" bindtap="tocarLinha">
+        <text class="pos {{item.lider ? 'lider' : ''}}">{{item.pos}}</text>
+        <view class="enf-w">
+          <image wx:if="{{item.avatar}}" class="av" src="{{item.avatar}}" mode="aspectFill"></image>
+          <view wx:else class="av" style="background: {{item.cor}}"><text>{{item.ini}}</text></view>
+          <image wx:if="{{enf}}" class="enf" src="{{enf.imagem}}" mode="widthFix" style="left: {{enf.x}}%; top: {{enf.y}}%; width: {{enf.w}}%"></image>
+        </view>
+        <view class="tx">
+          <view class="tx-l"><text class="tx-b">{{item.nomeTxt}}</text><image wx:if="{{item.verificado}}" class="selo" src="{{ic.SELO}}" mode="aspectFit"></image><text class="taca" wx:if="{{item.trofeus}}">🏆{{item.trofeus}}</text></view>
+          <text class="tx-s">{{item.sub}}</text>
+        </view>
+        <text class="min">{{item.valor}}<text class="min-u"> {{item.un}}</text></text>
+      </view>
+      <view class="mais" wx:if="{{lista.length > 5}}" bindtap="alternarRanking">{{expandido ? "Mostrar menos" : "Ver ranking completo (" + lista.length + ")"}}</view>
+    </view>
+
+    <!-- Timeline geral: quem treinou e deixou aparecer -->
+    <view class="sec-cab"><text class="sec-t">Timeline</text></view>
+    <text class="tl-vazio" wx:if="{{!timeline.length}}">Quando a galera treinar, os treinos aparecem aqui.</text>
+    <view class="post" wx:for="{{timeline}}" wx:key="id">
+      <view class="post-cab" data-uid="{{item.uid}}" data-eu="{{item.eu}}" bindtap="tocarLinha">
+        <image wx:if="{{item.avatar}}" class="av-p" src="{{item.avatar}}" mode="aspectFill"></image>
+        <view wx:else class="av-p" style="background: {{item.cor}}"><text>{{item.ini}}</text></view>
+        <view class="tx"><text class="tx-b">{{item.nomeTxt}}</text><text class="tx-s">{{item.quando}}</text></view>
+        <view wx:if="{{item.podeTp}}" class="tp {{item.dei ? 'on' : ''}}" data-i="{{index}}" catchtap="tpTimeline" hover-class="tp-press">
+          <image src="{{item.dei ? ic.CHECK_PRETO : ic.CHECK_CINZA}}" mode="aspectFit"></image>
+          <text wx:if="{{item.tp}}">{{item.tp}}</text>
+        </view>
+      </view>
+      <image wx:if="{{item.img}}" class="post-foto" src="{{item.img}}" mode="aspectFill"></image>
+      <view wx:elif="{{item.card}}" class="tc">
+        <image wx:if="{{item.card.mapa}}" class="tc-mapa" src="{{item.card.mapa}}" mode="aspectFill"></image>
+        <image wx:else class="tc-marca" src="{{item.card.marca}}" mode="aspectFit"></image>
+        <view wx:if="{{!item.card.mapa}}" class="tc-brilho"></view>
+        <view class="tc-topo"><view class="tc-chip"><image src="{{item.card.ic}}" mode="aspectFit"></image></view><text class="tc-tipo">{{item.card.nome}}</text></view>
+        <view class="tc-hero"><text class="tc-v">{{item.card.v}}</text><text class="tc-u" wx:if="{{item.card.u}}">{{item.card.u}}</text></view>
+        <view class="tc-stats"><view class="tc-s" wx:for="{{item.card.stats}}" wx:for-item="s" wx:key="r"><text class="tc-sv">{{s.v}}</text><text class="tc-sr">{{s.r}}</text></view></view>
+        <image wx:if="{{item.strava}}" class="tc-pw" src="/images/strava-powered-branco.png" mode="aspectFit"></image>
+      </view>
+      <text class="post-l" wx:if="{{!item.card}}">{{item.linha}}</text>
+    </view>
+    <view class="mais-tl" wx:if="{{tlMais}}" bindtap="maisTimeline">{{tlCarregando ? "Carregando…" : "Ver mais"}}</view>
+
+    <text class="regra" wx:if="{{!grupoAtual}}">10 pts por dia que treinou, 1 a cada 5 min e 1 por km</text>
+    <view style="height: 64rpx"></view>
+  </block>
+
+  <!-- Folha "Chegou do Strava": arte do treino, foto e Moments -->
+  <!-- Avisos no chat (folha do sino): pergunta uma vez; "Agora não" só volta depois de 14 dias -->
+  <view class="ntf" wx:if="{{avisoSheet}}" catchtouchmove="nada">
+    <view class="ntf-fundo" bindtap="avisoAgoraNao"></view>
+    <view class="ntf-card">
+      <view class="ntf-alca"></view>
+      <view class="ntf-ilu">
+        <view class="ntf-luz"></view>
+        <text class="ntf-sino">🔔</text>
+        <view class="ntf-bolha b1"><text>✅ Tá pago! Corrida · 42 min</text></view>
+        <view class="ntf-bolha b2"><text>🏆 Pódio da semana</text></view>
+      </view>
+      <text class="ntf-t">Bora te avisar no chat?</text>
+      <text class="ntf-s">Seus treinos, o resumo do dia e o pódio de domingo chegam numa mensagem aqui no PhizChat. Sem spam, prometo.</text>
+      <view class="btn ntf-btn" bindtap="avisoQuero" hover-class="btn-press">{{avisoSheet.ocupado ? "Um segundo…" : "Quero receber"}}</view>
+      <view class="ntf-nao" bindtap="avisoAgoraNao">Agora não</view>
+    </view>
+  </view>
+
+  <view class="fl" wx:if="{{st}}" catchtouchmove="nada">
+    <view class="fl-fundo" bindtap="fecharStrava"></view>
+    <view class="fl-card">
+      <view class="fl-alca"></view>
+      <view class="fl-de"><image class="fl-st" src="{{marcas.STRAVA}}" mode="aspectFit"></image><text>Chegou do Strava</text></view>
+      <!-- Deixa claro: já está salvo e contando ponto -->
+      <view class="fl-ok" wx:if="{{!st.pendente}}"><view class="fl-ok-ck"><image src="{{ic.CHECK_PRETO}}" mode="aspectFit"></image></view><text>Treino salvo · já conta pontos no ranking</text></view>
+      <block wx:if="{{!st.editando}}">
+        <text class="fl-tit">{{st.titulo}}</text>
+        <text class="fl-l">{{st.linha}}</text>
+      </block>
+      <view class="fl-ed" wx:else>
+        <text class="fl-ed-r">Título</text>
+        <input class="fl-in" value="{{st.titulo}}" maxlength="60" bindinput="tituloStrava" />
+        <text class="fl-ed-r">Quem pode ver</text>
+        <view class="quem">
+          <view wx:for="{{st.quem}}" wx:key="id" class="qm {{item.on ? 'on' : ''}}" data-i="{{index}}" bindtap="quemStrava">
+            <view class="qm-ck"><image wx:if="{{item.on}}" src="{{ic.CHECK_PRETO}}" mode="aspectFit"></image></view>
+            <text>{{item.nome}}</text>
+          </view>
+        </view>
+      </view>
+      <image class="fl-arte" src="{{st.arte}}" mode="aspectFill"></image>
+      <view class="fl-st-pe">
+        <text class="ver-st" wx:if="{{st.noStrava}}" bindtap="verNoStrava" data-url="{{st.noStrava}}">View on Strava</text>
+        <image class="pw-st" src="/images/strava-powered.png" mode="aspectFit"></image>
+      </view>
+      <text class="fl-aviso" wx:if="{{st.pendente}}">Foi lançada à mão no Strava, então só vale ponto com foto.</text>
+      <text class="fl-aviso erro" wx:if="{{st.aviso}}">{{st.aviso}}</text>
+      <block wx:if="{{st.pendente}}">
+        <view class="btn" bindtap="fotoStrava" hover-class="btn-press">{{st.ocupado === 'foto' ? "Conferindo a foto…" : "Tirar foto do treino"}}</view>
+      </block>
+      <block wx:elif="{{st.editando}}">
+        <view class="btn" bindtap="salvarEdicaoStrava" hover-class="btn-press">{{st.ocupado === 'editar' ? "Salvando…" : "Salvar alterações"}}</view>
+        <view class="fl-nao" bindtap="cancelarEdicaoStrava">Cancelar</view>
+      </block>
+      <block wx:else>
+        <view class="btn" bindtap="fecharStrava" hover-class="btn-press">Pronto</view>
+        <view class="fl-acoes">
+          <view class="fl-a" bindtap="editarStrava">Editar</view>
+          <view class="fl-a" wx:if="{{!st.temFoto}}" bindtap="fotoStrava">{{st.ocupado === 'foto' ? "Conferindo…" : "Pôr foto"}}</view>
+          <view class="fl-a" bindtap="postarStrava">{{st.ocupado === 'post' ? "Salvando…" : "Salvar imagem"}}</view>
+        </view>
+      </block>
+      <view class="fl-nao" wx:if="{{st.pendente}}" bindtap="fecharStrava">Agora não</view>
+    </view>
+  </view>
+
+  <!-- Subiu de nível: palco escuro, luz de cima, o selo cai girando no pódio e o resto entra -->
+  <view class="lv {{nv.on ? 'on' : ''}}" wx:if="{{nv}}" catchtouchmove="nada">
+    <!-- Voltar sempre à mão: na festa fecha, na arte volta pra festa -->
+    <view class="ov-voltar" style="top: {{barTop - 4}}px" bindtap="voltarNivel"><image src="{{ic.VOLTAR_BRANCO}}" mode="aspectFit"></image></view>
+    <!-- Facho de luz na cor do selo: um largo e um miolo mais claro -->
+    <view class="lv-luz">
+      <view class="lv-cone"><view class="lv-cone-in" style="background: linear-gradient(to bottom, {{nv.ac}}CC, {{nv.ac}}40 45%, {{nv.ac}}00 78%)"></view></view>
+      <view class="lv-cone miolo"><view class="lv-cone-in" style="background: linear-gradient(to bottom, #FFFFFFCC, {{nv.ac}}33 50%, {{nv.ac}}00 75%)"></view></view>
+    </view>
+    <view wx:for="{{nv.po}}" wx:key="d" class="lv-po" style="left: {{item.x}}rpx; top: {{item.y}}rpx; animation-delay: {{item.d}}s"></view>
+    <!-- Etapa 1: a festa -->
+    <block wx:if="{{nv.etapa === 1}}">
+      <view class="lv-palco">
+        <view class="lv-flash" style="background: radial-gradient(closest-side, #FFFFFFEE, {{nv.ac}}66 55%, {{nv.ac}}00)"></view>
+        <image class="lv-podio" src="/images/nivel-podio.png" mode="aspectFit"></image>
+        <view class="lv-poca"></view>
+        <view class="lv-sombra"></view>
+        <view class="lv-flutua">
+          <view class="lv-moeda">
+            <view class="lv-lado"><image src="{{nv.selo}}" mode="aspectFit"></image><text class="lv-n" style="{{nv.numPara}}">{{nv.para}}</text></view>
+            <view class="lv-lado tras"><image src="{{nv.selo}}" mode="aspectFit"></image><text class="lv-n" style="{{nv.numDe}}">{{nv.de || ""}}</text></view>
+          </view>
+        </view>
+        <view wx:for="{{nv.canhoes}}" wx:for-item="g" wx:key="lado" class="lv-pulo {{g.lado}}">
+          <view wx:for="{{g.cf}}" wx:key="k" class="lv-cf {{item.cls}}" style="animation-delay: {{item.d}}s; animation-duration: {{item.du}}s"><view class="lv-r" style="transform: rotate({{item.a}}deg)"><view class="lv-cf-b" style="left: {{-item.w / 2}}rpx; width: {{item.w}}rpx; height: {{item.h}}rpx; border-radius: {{item.bola ? '999rpx' : '2rpx'}}; background: {{item.c}}; animation-delay: {{item.d}}s; animation-duration: {{item.du}}s"></view></view></view>
+        </view>
+        <view class="lv-brilho"><text wx:for="{{nv.estrelas}}" wx:key="d" class="lv-est" style="left: {{item.x}}rpx; top: {{item.y}}rpx; animation-delay: {{item.d}}s">✦</text></view>
+      </view>
+      <view class="lv-tx">
+        <text class="lv-topo" style="color: {{nv.ac}}">{{nv.topo}}</text>
+        <text class="lv-faixa">{{nv.titulo}}</text>
+        <text class="lv-frase">{{nv.texto}}</text>
+        <view class="lv-recs" wx:if="{{nv.recompensas.length}}">
+          <view wx:for="{{nv.recompensas}}" wx:key="nome" class="lv-rec" style="transition-delay: {{0.3 + index * 0.08}}s"><view class="lv-rec-p" style="background: {{nv.ac}}"></view><text>{{item.nome}}</text></view>
+        </view>
+      </view>
+      <view class="lv-pe">
+        <view class="lv-btn" style="background: {{nv.ac}}" bindtap="verArteNivel" hover-class="btn-press">Continuar</view>
+      </view>
+    </block>
+    <!-- Etapa 2: a arte pra salvar e postar -->
+    <view class="lv-arte" wx:else>
+      <view class="lv-meio">
+        <text class="lv-arte-t">Poste e mostre que tá pago</text>
+        <image class="lv-img" src="{{nv.arte}}" mode="aspectFit"></image>
+        <text class="lv-arte-s">Sua arte fica guardada no seu perfil e em Ajustes.</text>
+      </view>
+      <view class="lv-pe">
+        <view class="lv-btn" style="background: {{nv.ac}}" bindtap="postarNivel" hover-class="btn-press">{{nv.ocupado === 'post' ? "Salvando…" : "Salvar pra postar no Moments"}}</view>
+        <view class="lv-fechar"><text bindtap="salvarNivel">{{nv.ocupado === 'salvar' ? "Salvando…" : "Salvar imagem"}}</text><text class="lv-ponto">·</text><text bindtap="fecharNivel">Fechar</text></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Ganhou uma conquista (badge da campanha): mesmo palco do nível, o badge cai no pódio -->
+  <view class="lv {{cq.on ? 'on' : ''}}" wx:if="{{cq}}" catchtouchmove="nada">
+    <view class="ov-voltar" style="top: {{barTop - 4}}px" bindtap="voltarConquista"><image src="{{ic.VOLTAR_BRANCO}}" mode="aspectFit"></image></view>
+    <view class="lv-luz">
+      <view class="lv-cone"><view class="lv-cone-in" style="background: linear-gradient(to bottom, {{cq.ac}}CC, {{cq.ac}}40 45%, {{cq.ac}}00 78%)"></view></view>
+      <view class="lv-cone miolo"><view class="lv-cone-in" style="background: linear-gradient(to bottom, #FFFFFFCC, {{cq.ac}}33 50%, {{cq.ac}}00 75%)"></view></view>
+    </view>
+    <view wx:for="{{cq.po}}" wx:key="d" class="lv-po" style="left: {{item.x}}rpx; top: {{item.y}}rpx; animation-delay: {{item.d}}s"></view>
+    <block wx:if="{{cq.etapa === 1}}">
+      <view class="lv-palco">
+        <view class="lv-flash" style="background: radial-gradient(closest-side, #FFFFFFEE, {{cq.ac}}66 55%, {{cq.ac}}00)"></view>
+        <image class="lv-podio" src="/images/nivel-podio.png" mode="aspectFit"></image>
+        <view class="lv-poca"></view>
+        <view class="lv-sombra"></view>
+        <view class="lv-flutua">
+          <view class="lv-moeda">
+            <view class="lv-lado"><image src="{{cq.imagem}}" mode="aspectFit"></image></view>
+            <view class="lv-lado tras"><image src="{{cq.imagem}}" mode="aspectFit"></image></view>
+          </view>
+        </view>
+        <view wx:for="{{cq.canhoes}}" wx:for-item="g" wx:key="lado" class="lv-pulo {{g.lado}}">
+          <view wx:for="{{g.cf}}" wx:key="k" class="lv-cf {{item.cls}}" style="animation-delay: {{item.d}}s; animation-duration: {{item.du}}s"><view class="lv-r" style="transform: rotate({{item.a}}deg)"><view class="lv-cf-b" style="left: {{-item.w / 2}}rpx; width: {{item.w}}rpx; height: {{item.h}}rpx; border-radius: {{item.bola ? '999rpx' : '2rpx'}}; background: {{item.c}}; animation-delay: {{item.d}}s; animation-duration: {{item.du}}s"></view></view></view>
+        </view>
+        <view class="lv-brilho"><text wx:for="{{cq.estrelas}}" wx:key="d" class="lv-est" style="left: {{item.x}}rpx; top: {{item.y}}rpx; animation-delay: {{item.d}}s">✦</text></view>
+      </view>
+      <view class="lv-tx">
+        <text class="lv-topo" style="color: {{cq.ac}}">{{cq.topo}}</text>
+        <text class="lv-faixa">{{cq.nome}}</text>
+        <text class="lv-frase">{{cq.texto}}</text>
+      </view>
+      <view class="lv-pe">
+        <view class="lv-btn" style="background: {{cq.ac}}" bindtap="verArteConquista" hover-class="btn-press">Continuar</view>
+      </view>
+    </block>
+    <view class="lv-arte" wx:else>
+      <view class="lv-meio">
+        <text class="lv-arte-t">Poste e mostre que tá pago</text>
+        <image class="lv-img" src="{{cq.arte}}" mode="aspectFit"></image>
+        <text class="lv-arte-s">Sua conquista fica guardada no seu perfil.</text>
+      </view>
+      <view class="lv-pe">
+        <view class="lv-btn" style="background: {{cq.ac}}" bindtap="postarConquista" hover-class="btn-press">{{cq.ocupado === 'post' ? "Salvando…" : "Salvar pra postar no Moments"}}</view>
+        <view class="lv-fechar"><text bindtap="salvarConquista">{{cq.ocupado === 'salvar' ? "Salvando…" : "Salvar imagem"}}</text><text class="lv-ponto">·</text><text bindtap="fecharConquista">Fechar</text></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Campeão da semana: troféu, confete e o total de troféus vencidos -->
+  <view class="vt" wx:if="{{vit}}" catchtouchmove="nada">
+    <view class="ov-voltar" style="top: {{barTop - 4}}px" bindtap="voltarVitoria"><image src="{{ic.VOLTAR_BRANCO}}" mode="aspectFit"></image></view>
+    <view class="vt-luz2"></view>
+    <view class="vt-conf">
+      <view wx:for="{{conf}}" wx:key="index" class="vt-cf" style="left: {{item.x}}%; width: {{item.w}}rpx; height: {{item.w * 1.6}}rpx; background: {{item.cor}}; animation-delay: {{item.d}}s; animation-duration: {{item.t}}s; transform: rotate({{item.r}}deg)"></view>
+    </view>
+    <view class="vt-luz"></view>
+    <!-- Etapa 1: a festa -->
+    <view class="vt-in" wx:if="{{vit.etapa === 1}}">
+      <text class="vt-trofeu">🏆</text>
+      <text class="vt-r">{{vit.rotulo}}</text>
+      <text class="vt-tit">{{vit.titulo}}</text>
+      <text class="vt-v">{{vit.valorTxt}} · {{vit.membros}} na disputa</text>
+      <view class="vt-cont">
+        <text class="vt-n">{{vit.n}}</text>
+        <view class="vt-cont-tx"><text class="vt-cont-b">{{vit.frase}}</text><text class="vt-cont-s" wx:if="{{vit.aqui}}">{{vit.aqui}}</text></view>
+      </view>
+      <view class="btn vt-btn" bindtap="verArteCampeao" hover-class="btn-press">Ver minha arte de campeão</view>
+      <view class="vt-nao" bindtap="fecharVitoria">Bora defender o título</view>
+    </view>
+    <!-- Etapa 2: a arte pra postar -->
+    <view class="vt-in vt-arte" wx:else>
+      <image class="vt-img" src="{{vit.arte}}" mode="aspectFit" bindtap="salvarCampeao"></image>
+      <view class="btn vt-btn" bindtap="postarCampeao" hover-class="btn-press">{{vit.ocupado === 'post' ? "Salvando…" : "Salvar pra postar no Moments"}}</view>
+      <view class="vt-dois">
+        <view class="vt-sec" bindtap="salvarCampeao" hover-class="btn-press">{{vit.ocupado === 'salvar' ? "Salvando…" : "Salvar imagem"}}</view>
+        <button class="vt-sec" open-type="share" data-vit="1">Mandar no chat</button>
+      </view>
+      <view class="vt-nao" bindtap="fecharVitoria">Fechar</view>
+    </view>
+  </view>
+
+  <view class="toast" style="bottom: 64rpx" wx:if="{{toast}}">{{toast}}</view>
+</view>

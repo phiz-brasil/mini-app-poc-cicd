@@ -1,0 +1,1 @@
+{ "desc": "Configuração de indexação do miniapp.", "rules": [{ "action": "allow", "page": "*" }] }

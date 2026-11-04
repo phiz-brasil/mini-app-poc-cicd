@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FE3D7"/><stop offset="1" stop-color="#1FA597"/></linearGradient></defs>
+    <path d="M120 10 L230 120 L120 230 L10 120 Z" fill="#111"/>
+    <path d="M120 24 L216 120 L120 216 L24 120 Z" fill="url(#g)"/>
+    <path d="M120 46 L194 120 L120 194 L46 120 Z" fill="none" stroke="#111" stroke-opacity=".18" stroke-width="3"/>
+    <path d="M132 58 L88 128 L116 128 L104 182 L152 106 L124 106 Z" fill="#111" stroke="#111" stroke-width="4" stroke-linejoin="round"/></svg>

@@ -1,0 +1,66 @@
+<view class="tela-b">
+  <view class="barra" style="padding-top: {{barTop}}px; height: {{barH}}px">
+    <view class="barra-voltar" style="top: {{barTop - 4}}px" bindtap="voltar"><image src="{{ic.VOLTAR}}" mode="aspectFit"></image></view>
+    <text class="barra-tit">Ajustes</text>
+  </view>
+
+  <text class="sec">Seu nome</text>
+  <text class="nota" style="margin-top: 0; margin-bottom: 16rpx">Veio do seu perfil do PhizChat</text>
+  <view class="campo">
+    <input class="campo-in" value="{{nome}}" maxlength="40" confirm-type="done" bindinput="onNome" bindconfirm="salvarNome" bindblur="salvarNome" />
+  </view>
+
+  <text class="sec">Conectados</text>
+  <!-- Conectado: selo ON grande e "Desconectar" pequeno embaixo do nome. -->
+  <view class="lc">
+    <image class="marca" src="{{marcas.STRAVA}}" mode="aspectFit"></image>
+    <view class="lc-tx">
+      <text class="lc-b">Strava</text>
+      <text class="lc-s">{{stravaTx}}</text>
+      <text class="lc-link" wx:if="{{strava}}" catchtap="desconectarStrava">{{ocupado ? "Desconectando…" : "Desconectar"}}</text>
+    </view>
+    <view wx:if="{{strava}}" class="on"><view class="on-dot"></view><text>ON</text></view>
+  </view>
+  <!-- Botão oficial do Strava (arte deles, sem alterar) -->
+  <image wx:if="{{!strava}}" class="st-btn" src="/images/strava-connect.png" mode="aspectFit" bindtap="conectarStrava"></image>
+  <text wx:if="{{!strava}}" class="st-nav" bindtap="stravaNavegador">Não abriu? Conectar pelo navegador</text>
+  <image wx:else class="st-pw" src="/images/strava-powered.png" mode="aspectFit"></image>
+  <view class="lc" bindtap="garmin">
+    <image class="marca" src="{{marcas.GARMIN}}" mode="aspectFit"></image>
+    <view class="lc-tx"><text class="lc-b">Garmin</text><text class="lc-s">Pelo Strava, por enquanto</text></view>
+    <view class="pilula sec">Como ligar</view>
+  </view>
+
+  <text class="sec">Notificações</text>
+  <!-- Avisos no chat: desligar só descadastra (o telefone fica guardado pra se voltar). -->
+  <view class="lc">
+    <view class="lc-tx"><text class="lc-b">Avisos no chat</text><text class="lc-s">{{avisosTx}}</text></view>
+    <switch checked="{{avisosOn}}" color="#111111" bindchange="trocarAvisos" />
+  </view>
+
+  <text class="sec">No ranking</text>
+  <view class="lc">
+    <view class="lc-tx"><text class="lc-b">Aparecer no ranking geral</text><text class="lc-s">Seus grupos sempre veem você</text></view>
+    <switch checked="{{aparecer}}" color="#111111" bindchange="onAparecer" />
+  </view>
+  <view class="lc">
+    <view class="lc-tx"><text class="lc-b">Perfil público</text><text class="lc-s">Quem tocar em você no ranking vê seus números e treinos</text></view>
+    <switch checked="{{perfilPublico}}" color="#111111" bindchange="onPerfil" />
+  </view>
+  <text class="nota" style="margin-top: 8rpx">Pontos Tá Pago!: 10 por dia que treinou, 1 a cada 5 min (até 120 min) e 1 por km (até 20 km). No máximo 54 por dia.</text>
+
+  <!-- "Destaques" (a conta oficial posta nos Moments) volta quando a OpenAPI de Moments for liberada. -->
+
+  <view class="lc" bindtap="verEntrada">
+    <view class="lc-tx"><text class="lc-b">Como funciona o Tá Pago!</text><text class="lc-s">Rever a tela de entrada</text></view>
+  </view>
+  <view class="lc" bindtap="verArteNivel" wx:if="{{nivel}}">
+    <view class="lc-tx"><text class="lc-b">Arte do meu nível</text><text class="lc-s">Salvar ou postar a arte do nível {{nivel}}</text></view>
+  </view>
+  <view class="lc" bindtap="reverNivel" wx:if="{{nivel}}">
+    <view class="lc-tx"><text class="lc-b">Meu nível</text><text class="lc-s">Rever a comemoração do nível {{nivel}}</text></view>
+  </view>
+  <view class="sair" bindtap="sair">Sair do Tá Pago!</view>
+  <text class="apagar" bindtap="apagarConta">{{apagando ? "Apagando…" : "Apagar minha conta"}}</text>
+  <text class="versao">Tá Pago! {{versao}}</text>
+</view>

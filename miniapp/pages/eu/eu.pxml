@@ -1,0 +1,148 @@
+<view class="tela">
+  <view class="barra" style="padding-top: {{barTop}}px; height: {{barH}}px">
+    <view class="barra-voltar" style="top: {{barTop - 4}}px" bindtap="voltar"><image src="{{ic.VOLTAR}}" mode="aspectFit"></image></view>
+  </view>
+
+  <view class="estado" wx:if="{{carregando}}"><view class="spinner"></view></view>
+  <view class="estado" wx:elif="{{erro}}">
+    <text class="estado-tx">{{erro}}</text>
+    <view class="btn estado-btn" bindtap="voltar" hover-class="btn-press">Voltar</view>
+  </view>
+
+  <view class="estado" wx:elif="{{privado}}">
+    <text class="estado-tx">{{privado}} deixou o perfil fechado. Os pontos continuam valendo no ranking.</text>
+    <view class="btn estado-btn" bindtap="voltar" hover-class="btn-press">Voltar</view>
+  </view>
+
+  <block wx:else>
+    <!-- Quem sou -->
+    <view class="cab">
+      <view class="enf-w">
+        <image wx:if="{{eu.avatar}}" class="foto" src="{{eu.avatar}}" mode="aspectFill"></image>
+        <view wx:else class="foto" style="background: {{cor}}"><text>{{ini}}</text></view>
+        <image wx:if="{{enf}}" class="enf" src="{{enf.imagem}}" mode="widthFix" style="left: {{enf.x}}%; top: {{enf.y}}%; width: {{enf.w}}%"></image>
+      </view>
+      <view class="cab-tx">
+        <view class="nome-l"><text class="nome">{{eu.nome}}</text><image wx:if="{{outro && eu.verificado}}" class="selo" src="{{ic.SELO}}" mode="aspectFit"></image></view>
+        <text class="sub" wx:if="{{sub}}">{{sub}}</text>
+        <view class="cab-nv" wx:if="{{tagNivel}}">
+          <image class="cab-nv-selo" src="{{tagNivel.selo}}" mode="aspectFit"></image>
+          <text class="cab-nv-n">Nível {{tagNivel.n}} · {{tagNivel.faixa}}</text>
+        </view>
+      </view>
+      <view wx:if="{{!outro}}" class="aj" bindtap="abrirAjustes" hover-class="tp-press"><image src="{{ic.AJUSTES}}" mode="aspectFit"></image></view>
+    </view>
+
+    <!-- Meu nível (só eu vejo) -->
+    <view class="nvc" wx:if="{{nivel}}">
+      <view class="nvc-luz" style="background: radial-gradient(closest-side, {{nivel.ac}}55, {{nivel.ac}}00)"></view>
+      <view class="nvc-share" bindtap="arteNivel" hover-class="tp-press"><image src="{{ic.COMPARTILHAR_BRANCO}}" mode="aspectFit"></image></view>
+      <view class="nvc-topo">
+        <view class="nvc-selo"><image src="{{nivel.selo}}" mode="aspectFit"></image><text class="nvc-n" style="{{nivel.num}}">{{nivel.n}}</text></view>
+        <view class="nvc-tx">
+          <text class="nvc-l">Nível {{nivel.n}}</text>
+          <text class="nvc-faixa" style="color: {{nivel.ac}}">{{nivel.faixa}}</text>
+          <text class="nvc-xp">{{nivel.xp}} pontos de treino</text>
+        </view>
+      </view>
+      <view class="nvc-barra"><view class="nvc-in" style="width: {{nivel.pct}}%; background: {{nivel.ac}}"></view></view>
+      <text class="nvc-falta">Faltam {{nivel.falta}} pontos pro nível {{nivel.prox}}</text>
+    </view>
+
+    <!-- Conquistas (badges): as que ganhei e, no meu perfil, as que ainda dá pra ganhar -->
+    <view class="cq" wx:if="{{cqGanhas.length || cqBloq.length}}">
+      <view class="cq-cab"><text class="cq-t">Conquistas</text><text class="cq-n">{{cqGanhas.length}}</text></view>
+      <scroll-view class="cq-lista" scroll-x enable-flex>
+        <view wx:for="{{cqGanhas}}" wx:key="id" class="cq-i" data-i="{{index}}" bindtap="abrirConquista" hover-class="tp-press">
+          <view class="cq-luz" style="background: radial-gradient(closest-side, {{item.cor}}55, {{item.cor}}00)"></view>
+          <image class="cq-img" src="{{item.imagem}}" mode="aspectFit"></image>
+          <text class="cq-nome">{{item.nome}}</text>
+          <text class="cq-s">{{item.quando}}</text>
+        </view>
+        <view wx:for="{{cqBloq}}" wx:key="id" class="cq-i bloq" data-i="{{index}}" bindtap="verBloqueada" hover-class="tp-press">
+          <image class="cq-img" src="{{item.imagem}}" mode="aspectFit"></image>
+          <text class="cq-nome">{{item.nome}}</text>
+          <text class="cq-s cq-falta" style="color: {{item.cor}}">{{item.quando || "Ainda não ganhou"}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- Pontos Tá Pago! -->
+    <view class="pts">
+      <text class="pts-r">Pontos Tá Pago!</text>
+      <view class="pts-num"><text class="pts-n">{{pts.total}}</text><text class="pts-u">pts</text></view>
+      <view class="pts-pe">
+        <view class="pts-i"><text class="pts-v">{{pts.semana}}</text><text class="pts-l">na semana</text></view>
+        <view class="pts-i"><text class="pts-v">{{pts.mes}}</text><text class="pts-l">no mês</text></view>
+        <view class="pts-i"><text class="pts-v">{{pts.pos}}</text><text class="pts-l">{{pts.de ? "de " + pts.de + " no geral" : "fora do geral"}}</text></view>
+      </view>
+    </view>
+
+    <!-- Troféus vencidos -->
+    <view class="tf-card" wx:if="{{nTrofeus}}">
+      <view class="tf-topo"><text class="tf-emoji">🏆</text><view class="tf-tx"><text class="tf-n">{{nTrofeus}}</text><text class="tf-l">{{nTrofeus === 1 ? "troféu vencido" : "troféus vencidos"}}</text></view></view>
+      <view class="tf-lista">
+        <view class="tf-i" wx:for="{{trofeus}}" wx:key="index"><text class="tf-i-b">{{item.titulo}}</text><text class="tf-i-s">{{item.quando}} · {{item.valor}}</text></view>
+      </view>
+    </view>
+
+    <!-- Números -->
+    <view class="grade">
+      <view class="n" wx:for="{{numeros}}" wx:key="r">
+        <text class="n-r">{{item.r}}</text>
+        <view class="n-num"><text class="n-v">{{item.v}}</text><text class="n-u" wx:if="{{item.u}}">{{item.u}}</text></view>
+      </view>
+    </view>
+
+    <!-- Calendário: só na minha página -->
+    <block wx:if="{{!outro}}">
+    <view class="sec-cab"><text class="sec-t">Calendário</text><text class="sec-s">{{calMes}}</text></view>
+    <view class="cal">
+      <view class="cal-cab"><text wx:for="{{cab}}" wx:key="index">{{item}}</text></view>
+      <view class="cal-grade">
+        <view wx:for="{{cal}}" wx:key="dia" class="cal-d {{item.nivel}} {{item.hoje ? 'hoje' : ''}}"><text>{{item.n}}</text></view>
+      </view>
+      <view class="cal-leg">
+        <view class="cal-leg-i"><view class="cal-p ok"></view><text>treinou</text></view>
+        <view class="cal-leg-i"><view class="cal-p forte"></view><text>dia forte (30+ pts)</text></view>
+      </view>
+    </view>
+    </block>
+
+    <!-- Por tipo -->
+    <block wx:if="{{tipos.length}}">
+      <view class="sec-cab"><text class="sec-t">{{outro ? "O que " + primeiro + " mais faz" : "O que mais faço"}}</text></view>
+      <view class="caixa tipos">
+        <view class="tp-l" wx:for="{{tipos}}" wx:key="tipo">
+          <view class="tp-top"><text class="tp-n">{{item.tipo}}</text><text class="tp-m">{{item.min}} min · {{item.n}}×</text></view>
+          <view class="tp-trilho"><view class="tp-barra" style="width: {{item.w}}%"></view></view>
+        </view>
+      </view>
+    </block>
+
+    <!-- Meus treinos -->
+    <view class="sec-cab"><text class="sec-t">{{outro ? "Treinos" : "Meus treinos"}}</text></view>
+    <view class="vazio" wx:if="{{vazio}}">
+      <text class="vazio-t">{{outro ? "Nada publicado ainda." : "Nenhum treino ainda."}}</text>
+      <view wx:if="{{!outro}}" class="mini-btn" bindtap="registrar">Registrar</view>
+    </view>
+    <view class="caixa" wx:else>
+      <view class="tr" wx:for="{{treinos}}" wx:key="id">
+        <image wx:if="{{item.foto}}" class="tr-foto" src="{{item.foto}}" mode="aspectFill"></image>
+        <view wx:else class="tc-mini {{item.mini.cls}}"><image src="{{item.mini.ic}}" mode="aspectFit"></image></view>
+        <view class="tr-tx">
+          <view class="tr-cab"><text class="tr-b">{{item.tipo}}</text><text class="tr-d">{{item.data}}</text></view>
+          <text class="tr-s">{{item.linha}}</text>
+          <text class="ver-st" wx:if="{{item.noStrava}}" catchtap="verNoStrava" data-url="{{item.noStrava}}">View on Strava</text>
+          <text class="tr-tag" wx:if="{{item.pendente}}">esperando foto pra valer</text>
+          <text class="tr-tag" wx:elif="{{item.duvida}}">foto em análise</text>
+        </view>
+        <view wx:if="{{!outro}}" class="tr-lixo" data-id="{{item.id}}" bindtap="apagar" hover-class="tp-press"><image src="{{ic.LIXO}}" mode="aspectFit"></image></view>
+      </view>
+    </view>
+    <image wx:if="{{temStrava}}" class="pw-st" src="/images/strava-powered.png" mode="aspectFit"></image>
+    <view style="height: 96rpx"></view>
+  </block>
+
+  <view class="toast" style="bottom: 64rpx" wx:if="{{toast}}">{{toast}}</view>
+</view>

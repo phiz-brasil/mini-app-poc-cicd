@@ -1,0 +1,40 @@
+<view class="pb">
+  <view class="ov-voltar" style="top: {{barTop - 4}}px" bindtap="agoraNao"><image src="{{ic.VOLTAR}}" mode="aspectFit"></image></view>
+  <!-- Confete: só CSS, cai uma vez e para. -->
+  <view class="confete">
+    <view wx:for="{{confete}}" wx:key="index" class="cf"
+      style="left: {{item.x}}%; width: {{item.w}}rpx; height: {{item.w * 1.6}}rpx; background: {{item.cor}}; animation-delay: {{item.d}}s; animation-duration: {{item.t}}s; transform: rotate({{item.r}}deg)"></view>
+  </view>
+
+  <view class="pb-topo" style="padding-top: {{conteudoTop}}px">
+    <view class="pb-selo"><image src="{{ic.CHECK_LIMAO}}" mode="aspectFit"></image></view>
+    <text class="pb-tit pop">{{tit}}</text>
+    <text class="pb-sub">{{sub}}</text>
+    <view class="pb-pills">
+      <text class="pill">{{min}} min · {{tipoTxt}}</text>
+      <text class="pill" wx:if="{{posTxt}}">{{posTxt}}</text>
+      <text class="pill" wx:if="{{seqTxt}}">🔥 {{seqTxt}}</text>
+    </view>
+  </view>
+
+  <view class="pb-folha">
+    <text class="pb-q">Postar no seu Moments?</text>
+    <!-- Prévia da arte que vai pros Moments (a mesma de lib/arte.tsx no servidor) -->
+    <view class="mom">
+      <image wx:if="{{foto}}" class="mom-img" src="{{foto}}" mode="aspectFill"></image>
+      <view class="mom-grad"></view>
+      <text class="mom-logo">Tá Pago!</text>
+      <view class="mom-selo"><text>TÁ</text><text>PAGO!</text></view>
+      <view class="mom-pe">
+        <text class="mom-r">{{tipoTxt}}</text>
+        <view class="mom-num"><text class="mom-n">{{min}}</text><text class="mom-u">min</text></view>
+      </view>
+    </view>
+
+    <text class="pb-res" wx:if="{{feito}}">{{resultado}}</text>
+    <block wx:else>
+      <view class="btn" bindtap="postar" hover-class="btn-press">{{enviando ? "Salvando…" : "Salvar pra postar no Moments"}}</view>
+      <view class="pb-nao" bindtap="agoraNao">Agora não</view>
+    </block>
+  </view>
+</view>

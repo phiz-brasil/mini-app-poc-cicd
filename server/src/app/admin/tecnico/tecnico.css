@@ -1,0 +1,47 @@
+/* Página "Como funciona" do admin: texto longo, legível. */
+.tec section { max-width: 1040px; }
+.tec h1 { margin: 32px 0 12px; font-family: var(--f-pop), sans-serif; font-size: 30px; font-weight: 600; letter-spacing: -.5px; }
+.tec .lead { font-size: 16px; line-height: 1.6; color: var(--tinta); max-width: 780px; margin: 0 0 20px; }
+.tec .lead b, .tec .obs b, .tec .passos b { font-weight: 500; }
+.tec .obs { font-size: 14px; line-height: 1.6; color: var(--apoio); max-width: 780px; margin: 12px 0 0; }
+.tec .secoes a.on { background: var(--trilho); color: var(--tinta); }
+
+.tec .diag { display: flex; align-items: center; gap: 12px; padding: 24px; border-radius: 20px; background: var(--card); overflow-x: auto; }
+.tec .diag-col { display: flex; flex-direction: column; align-items: stretch; min-width: 200px; }
+.tec .bloco { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px; border-radius: 14px; background: var(--trilho); }
+.tec .bloco small { font-size: 11px; color: var(--mudo); text-transform: uppercase; letter-spacing: .5px; }
+.tec .bloco strong { font-size: 16px; font-weight: 600; }
+.tec .bloco span { font-size: 12px; color: var(--apoio); }
+.tec .bloco.escuro { background: #111111; color: #FFFFFF; }
+.tec .bloco.escuro small, .tec .bloco.escuro span { color: rgba(255,255,255,.65); }
+.tec .bloco.limao { background: #C6F432; color: #111111; }
+.tec .bloco.limao small, .tec .bloco.limao span { color: rgba(17,17,17,.65); }
+.tec .seta-v { width: 2px; height: 18px; margin: 4px auto; background: var(--linha); }
+.tec .seta-h { position: relative; flex: 0 0 64px; height: 2px; background: var(--linha); }
+.tec .seta-h span { position: absolute; left: 50%; top: -20px; transform: translateX(-50%); font-size: 11px; color: var(--mudo); white-space: nowrap; }
+.tec .lista-ext { gap: 8px; }
+.tec .ext { padding: 10px 14px; border-radius: 12px; border: 1px solid var(--linha); font-size: 13px; white-space: nowrap; }
+
+.tec .fatos { display: flex; flex-direction: column; margin: 0; border-radius: 16px; background: var(--card); overflow: hidden; }
+.tec .fatos div { display: grid; grid-template-columns: 200px 1fr; gap: 16px; padding: 14px 18px; border-bottom: 1px solid var(--linha); }
+.tec .fatos div:last-child { border-bottom: none; }
+.tec .fatos dt { font-weight: 600; }
+.tec .fatos dd { margin: 0; line-height: 1.55; color: var(--apoio); }
+
+.tec .passos { margin: 0; padding: 18px 18px 18px 40px; border-radius: 16px; background: var(--card); line-height: 1.7; font-size: 15px; }
+.tec .pontos { margin: 0; padding: 18px 18px 18px 36px; border-radius: 16px; background: var(--card); line-height: 1.8; }
+.tec .cards3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.tec .cards3 .card { margin: 0; }
+.tec .tab { background: var(--card); border-radius: 16px; overflow: hidden; }
+.tec .tab td { white-space: normal; vertical-align: top; line-height: 1.5; }
+.tec .tab td:first-child { font-weight: 600; white-space: nowrap; }
+.tec .glos { display: grid; grid-template-columns: 180px 1fr; gap: 10px 16px; margin: 0; padding: 18px; border-radius: 16px; background: var(--card); }
+.tec .glos dt { font-weight: 600; }
+.tec .glos dd { margin: 0; color: var(--apoio); line-height: 1.5; }
+
+@media (max-width: 720px) {
+  .tec .fatos div, .tec .glos { grid-template-columns: 1fr; gap: 4px; }
+  .tec .diag { flex-direction: column; align-items: stretch; }
+  .tec .seta-h { flex: 0 0 24px; width: 2px; height: 24px; margin: 0 auto; }
+  .tec .seta-h span { display: none; }
+}

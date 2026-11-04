@@ -1,0 +1,192 @@
+<view class="tela">
+  <view class="barra" style="padding-top: {{barTop}}px; height: {{barH}}px">
+    <view class="barra-voltar" style="top: {{barTop - 4}}px" bindtap="voltar"><image src="{{ic.VOLTAR}}" mode="aspectFit"></image></view>
+  </view>
+
+  <view class="estado" wx:if="{{carregando}}"><view class="spinner"></view></view>
+
+  <view class="estado" wx:elif="{{erro}}">
+    <text class="estado-tx">{{erro}}</text>
+    <view class="btn estado-btn" bindtap="voltar" hover-class="btn-press">Voltar</view>
+  </view>
+
+  <block wx:else>
+    <!-- Cabeçalho do grupo -->
+    <view class="cab">
+      <view class="nome-l">
+        <text class="nome">{{grupo.nome}}</text>
+        <view wx:if="{{grupo.souCriador}}" class="b-ed" bindtap="editarGrupo" hover-class="tp-press"><text>Editar</text></view>
+      </view>
+      <view class="info">
+        <text class="info-m">{{como}}</text>
+        <text class="info-p">· {{membrosTxt}}</text>
+      </view>
+      <text class="desafio" wx:if="{{desafio}}">{{desafio}}</text>
+      <view class="cab-pe">
+        <view class="rostos">
+          <block wx:for="{{rosto}}" wx:key="uid">
+            <image wx:if="{{item.avatar}}" class="rosto" src="{{item.avatar}}" mode="aspectFill"></image>
+            <view wx:else class="rosto" style="background: {{item.cor}}"><text>{{item.ini}}</text></view>
+          </block>
+          <view class="rosto mais" wx:if="{{mais}}"><text>+{{mais}}</text></view>
+        </view>
+        <view class="acoes">
+          <view class="b-share" bindtap="convidar" hover-class="tp-press"><image src="{{ic.COMPARTILHAR}}" mode="aspectFit"></image></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Sua posição (logo no topo) -->
+    <view class="falta" wx:if="{{meu}}" data-eu="{{true}}" bindtap="tocarEu">
+      <text class="falta-pos">{{meu.pos}}º</text>
+      <view class="falta-col">
+        <text class="falta-b">Sua posição</text>
+        <text class="falta-rot">de {{total}} {{total === 1 ? "pessoa" : "pessoas"}} no grupo</text>
+        <text class="falta-tx" wx:if="{{falta}}">{{falta}}</text>
+      </view>
+    </view>
+
+    <!-- Período -->
+    <view class="seg">
+      <view class="seg-th" style="transform: translateX({{periodo === 'semana' ? 100 : periodo === 'mes' ? 200 : 0}}%)"></view>
+      <view class="seg-i {{periodo === 'total' ? 'on' : ''}}" data-p="total" bindtap="trocarPeriodo">Geral</view>
+      <view class="seg-i {{periodo === 'semana' ? 'on' : ''}}" data-p="semana" bindtap="trocarPeriodo">Semana</view>
+      <view class="seg-i {{periodo === 'mes' ? 'on' : ''}}" data-p="mes" bindtap="trocarPeriodo">Mês</view>
+    </view>
+
+    <!-- Pódio -->
+    <view class="podio {{rkTroca ? 'rk-sai' : 'rk-volta'}}">
+      <view wx:for="{{podio}}" wx:key="uid" class="pd pd-{{item.lugar}} {{item.eu ? 'eu' : ''}} {{rkAnim ? 'rk-pula' : ''}}" style="animation-delay: {{item.lugar === 1 ? 0 : item.lugar === 2 ? 0.08 : 0.14}}s" data-eu="{{item.eu}}" data-uid="{{item.uid}}" bindtap="tocarEu">
+        <view class="pd-av">
+          <image wx:if="{{item.avatar}}" class="pd-img" src="{{item.avatar}}" mode="aspectFill"></image>
+          <view wx:else class="pd-img" style="background: {{item.cor}}"><text>{{item.ini}}</text></view>
+          <image wx:if="{{enf}}" class="enf" src="{{enf.imagem}}" mode="widthFix" style="left: {{enf.x}}%; top: {{enf.y}}%; width: {{enf.w}}%"></image>
+          <text class="pd-coroa" wx:if="{{item.lugar === 1}}">👑</text>
+        </view>
+        <view class="pd-nl"><text class="pd-nome">{{item.nome}}</text><image wx:if="{{item.verificado}}" class="selo" src="{{ic.SELO}}" mode="aspectFit"></image></view>
+        <view wx:if="{{cutucarOn && !item.eu && !item.treinouHoje}}" class="cut pd-cut {{item.cutuquei ? 'on' : ''}}" data-uid="{{item.uid}}" catchtap="cutucar" hover-class="tp-press"><text>{{item.cutuquei ? "Cutucado" : "👉 Cutucar"}}</text></view>
+        <!-- Número da posição em cima; "28 pts / 2 dias" embaixo -->
+        <view class="pd-bloco">
+          <text class="pd-n">{{item.lugar}}</text>
+          <view class="pd-pe"><text class="pd-v">{{item.valor}} {{item.un}}</text><text class="pd-u">{{item.sub}}</text></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Do 4º ao 10º; o resto abre no "+" -->
+    <view class="caixa {{rkTroca ? 'rk-sai' : 'rk-volta'}}" wx:if="{{resto.length}}">
+      <view class="linha {{item.eu ? 'eu' : ''}} {{rkAnim ? 'rk-entra' : ''}}" style="animation-delay: {{0.18 + index * 0.045}}s" wx:for="{{resto}}" wx:key="uid" data-eu="{{item.eu}}" data-uid="{{item.uid}}" bindtap="tocarEu">
+        <text class="pos">{{item.pos}}º</text>
+        <view class="enf-w">
+          <image wx:if="{{item.avatar}}" class="av" src="{{item.avatar}}" mode="aspectFill"></image>
+          <view wx:else class="av" style="background: {{item.cor}}"><text>{{item.ini}}</text></view>
+          <image wx:if="{{enf}}" class="enf" src="{{enf.imagem}}" mode="widthFix" style="left: {{enf.x}}%; top: {{enf.y}}%; width: {{enf.w}}%"></image>
+        </view>
+        <view class="tx"><view class="tx-l"><text class="tx-b">{{item.nome}}</text><image wx:if="{{item.verificado}}" class="selo" src="{{ic.SELO}}" mode="aspectFit"></image><text class="taca" wx:if="{{item.trofeus}}">🏆{{item.trofeus}}</text></view></view>
+        <text class="val">{{item.valor}} {{item.un}}<text class="val-u"> / {{item.sub}}</text></text>
+        <view wx:if="{{cutucarOn && !item.eu && !item.treinouHoje}}" class="cut {{item.cutuquei ? 'on' : ''}}" data-uid="{{item.uid}}" catchtap="cutucar" hover-class="tp-press"><text>{{item.cutuquei ? "Cutucado" : "👉 Cutucar"}}</text></view>
+      </view>
+      <view class="ver-mais" wx:if="{{escondidos}}" bindtap="verTodos" hover-class="tp-press"><text>+ Ver mais {{escondidos}}</text></view>
+    </view>
+
+    <view class="chamar" wx:if="{{sozinho}}">
+      <text class="chamar-t">Ranking de um só não tem graça.</text>
+      <view class="b-conv" bindtap="convidar" hover-class="tp-press">Chamar a galera</view>
+    </view>
+
+    <!-- Feed -->
+    <text class="sec">Treinos do grupo</text>
+    <text class="nota" wx:if="{{vazio}}">Ninguém treinou ainda. Que tal ser o primeiro?</text>
+    <view class="post" wx:for="{{feed}}" wx:key="id">
+      <view class="post-cab" data-eu="{{item.eu}}" data-uid="{{item.uid}}" bindtap="tocarEu">
+        <image wx:if="{{item.avatar}}" class="av-p" src="{{item.avatar}}" mode="aspectFill"></image>
+        <view wx:else class="av-p" style="background: {{item.cor}}"><text>{{item.ini}}</text></view>
+        <view class="tx"><text class="tx-b">{{item.nome}}</text><text class="tx-s">{{item.quando}}</text></view>
+        <view wx:if="{{item.podeTp}}" class="tp {{item.dei ? 'on' : ''}}" data-uid="{{item.uid}}" data-dia="{{item.dia}}" catchtap="darTp" hover-class="tp-press">
+          <image src="{{item.dei ? ic.CHECK_PRETO : ic.CHECK_CINZA}}" mode="aspectFit"></image>
+          <text wx:if="{{item.tp}}">{{item.tp}}</text>
+        </view>
+      </view>
+      <image wx:if="{{item.foto}}" class="post-foto" src="{{item.foto}}" mode="aspectFill"></image>
+      <view wx:elif="{{item.card}}" class="tc">
+        <image wx:if="{{item.card.mapa}}" class="tc-mapa" src="{{item.card.mapa}}" mode="aspectFill"></image>
+        <image wx:else class="tc-marca" src="{{item.card.marca}}" mode="aspectFit"></image>
+        <view wx:if="{{!item.card.mapa}}" class="tc-brilho"></view>
+        <view class="tc-topo"><view class="tc-chip"><image src="{{item.card.ic}}" mode="aspectFit"></image></view><text class="tc-tipo">{{item.card.nome}}</text></view>
+        <view class="tc-hero"><text class="tc-v">{{item.card.v}}</text><text class="tc-u" wx:if="{{item.card.u}}">{{item.card.u}}</text></view>
+        <view class="tc-stats"><view class="tc-s" wx:for="{{item.card.stats}}" wx:for-item="s" wx:key="r"><text class="tc-sv">{{s.v}}</text><text class="tc-sr">{{s.r}}</text></view></view>
+        <image wx:if="{{item.strava}}" class="tc-pw" src="/images/strava-powered-branco.png" mode="aspectFit"></image>
+      </view>
+      <text class="post-l" wx:if="{{!item.card}}">{{item.linha}}</text>
+      <view class="post-st" wx:if="{{item.noStrava}}">
+        <text class="ver-st" catchtap="verNoStrava" data-url="{{item.noStrava}}">View on Strava</text>
+        <image class="pw-st" src="/images/strava-powered.png" mode="aspectFit"></image>
+      </view>
+    </view>
+
+    <view class="sair" bindtap="sair">Sair do grupo</view>
+    <view style="height: 200rpx"></view>
+  </block>
+
+  <view class="flut" bindtap="registrar" hover-class="btn-press" wx:if="{{!carregando && !erro}}">
+    <image src="{{ic.MAIS_PRETO}}" mode="aspectFit"></image><text>Treino</text>
+  </view>
+  <!-- Convidar amigos do PhizChat -->
+  <view class="cv" wx:if="{{cv}}" catchtouchmove="nada">
+    <view class="cv-fundo" bindtap="fecharConvite"></view>
+    <view class="cv-card">
+      <view class="cv-alca"></view>
+      <text class="cv-t">Convidar pro {{grupo.nome}}</text>
+      <view class="cv-carr" wx:if="{{cv.carregando}}"><view class="spinner"></view></view>
+      <block wx:elif="{{cv.plano === 'share'}}">
+        <text class="cv-s">Não deu pra abrir seus contatos do PhizChat. Manda o convite numa conversa:</text>
+        <button class="btn cv-btn" open-type="share">Escolher conversa</button>
+        <view class="cv-link" bindtap="copiarCodigo">Copiar convite com o código {{grupo.codigo}}</view>
+      </block>
+      <block wx:else>
+        <scroll-view class="cv-lista" scroll-y>
+          <view wx:for="{{cv.lista}}" wx:key="phizId" class="cv-i {{item.on ? 'on' : ''}} {{item.dentro || item.ja ? 'off' : ''}}" data-i="{{index}}" bindtap="marcarAmigo">
+            <image wx:if="{{item.avatar}}" class="cv-av" src="{{item.avatar}}" mode="aspectFill"></image>
+            <view wx:else class="cv-av" style="background: {{item.cor}}"><text>{{item.ini}}</text></view>
+            <text class="cv-n">{{item.nome}}</text>
+            <text class="cv-tag" wx:if="{{item.dentro}}">No grupo</text>
+            <text class="cv-tag" wx:elif="{{item.ja}}">Convidado</text>
+            <view wx:else class="cv-ck"><image wx:if="{{item.on}}" src="{{ic.CHECK_PRETO}}" mode="aspectFit"></image></view>
+          </view>
+        </scroll-view>
+        <view class="btn cv-btn {{cv.sel ? '' : 'off'}}" bindtap="enviarConvites" hover-class="btn-press">{{cv.enviando ? "Enviando…" : (cv.sel ? "Convidar " + cv.sel + (cv.sel === 1 ? " pessoa" : " pessoas") : "Escolha quem convidar")}}</view>
+      </block>
+    </view>
+  </view>
+
+  <!-- Editar grupo (dono) -->
+  <view class="cv" wx:if="{{ed}}" catchtouchmove="nada">
+    <view class="cv-fundo" bindtap="fecharEdicao"></view>
+    <view class="cv-card">
+      <view class="cv-alca"></view>
+      <text class="cv-t">Editar grupo</text>
+      <text class="ed-r">Nome</text>
+      <input class="ed-in" value="{{ed.nome}}" maxlength="32" bindinput="edNome" />
+      <text class="ed-r">Como conta</text>
+      <view class="ed-chips">
+        <view wx:for="{{ed.metricas}}" wx:key="id" class="ed-c {{ed.metrica === item.id ? 'on' : ''}}" data-m="{{item.id}}" bindtap="edMetrica">{{item.nome}}</view>
+      </view>
+      <text class="ed-r">Duração do desafio</text>
+      <view class="ed-chips">
+        <view class="ed-c {{!ed.comData ? 'on' : ''}}" data-v="0" bindtap="edComData">Sem data</view>
+        <view class="ed-c {{ed.comData ? 'on' : ''}}" data-v="1" bindtap="edComData">Com início e fim</view>
+      </view>
+      <view class="ed-datas" wx:if="{{ed.comData}}">
+        <picker mode="date" value="{{ed.inicio}}" bindchange="edInicio" class="ed-d">
+          <view class="ed-dv"><text class="ed-dl">Início</text><text class="ed-dt">{{ed.inicio}}</text></view>
+        </picker>
+        <picker mode="date" value="{{ed.fim || ed.inicio}}" start="{{ed.inicio}}" bindchange="edFim" class="ed-d">
+          <view class="ed-dv"><text class="ed-dl">Fim</text><text class="ed-dt">{{ed.fim || "Sem fim"}}</text></view>
+        </picker>
+      </view>
+      <view class="btn cv-btn" bindtap="salvarGrupo" hover-class="btn-press">{{ed.salvando ? "Salvando…" : "Salvar"}}</view>
+    </view>
+  </view>
+
+  <view class="toast" style="bottom: 200rpx" wx:if="{{toast}}">{{toast}}</view>
+</view>
