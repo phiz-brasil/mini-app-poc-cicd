@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
+import { lookup } from "node:dns/promises";
 import path from "node:path";
 
 /**
@@ -17,22 +18,34 @@ export type DadosCampeao = {
 const A = (f: string) => readFile(path.join(process.cwd(), "assets-og", f));
 const L = "#C6F432", P = "#111111";
 
-/** Só https para hosts públicos — avatar vem de perfil (input externo), e o
- *  fetch é server-side: sem isso, vira SSRF contra a própria Vercel (CodeQL). */
-function urlExternaSegura(s: string): URL | null {
+/** Defesa SSRF real: avatar vem de perfil (input externo) e o fetch é
+ *  server-side. Resolve o DNS e rejeita hosts que apontem para faixa
+ *  privada/loopback/reservada — blocklist textual de hostname não basta
+ *  (DNS pode apontar para onde quiser). */
+function ipPrivado(ip: string): boolean {
+  const n = ip.split(".").map(Number);
+  if (n.length !== 4 || n.some(x => Number.isNaN(x))) return true; // IPv6/inesperado → rejeita
+  const [a, b] = n;
+  return a === 0 || a === 10 || a === 127 ||
+    (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) ||
+    (a === 169 && b === 254) || a >= 224; // reservado/multicast
+}
+
+async function urlExternaSegura(s: string): Promise<URL | null> {
   let u: URL;
   try { u = new URL(s); } catch { return null; }
   if (u.protocol !== "https:") return null;
   const h = u.hostname.toLowerCase();
-  if (h === "localhost" || h.endsWith(".internal") || h.endsWith(".local") ||
-      /^(127\.|0\.|10\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(h) ||
-      h === "[::1]" || h === "::1") return null;
+  if (h === "localhost" || h.endsWith(".internal") || h.endsWith(".local")) return null;
+  let enderecos: { address: string }[];
+  try { enderecos = await lookup(h, { all: true }); } catch { return null; }
+  if (!enderecos.length || enderecos.some(a => ipPrivado(a.address))) return null;
   return u;
 }
 
 async function foto(url?: string): Promise<string | null> {
   if (!url) return null;
-  const alvo = urlExternaSegura(url);
+  const alvo = await urlExternaSegura(url);
   if (!alvo) return null;
   try {
     const r = await fetch(alvo, { signal: AbortSignal.timeout(6000) });
