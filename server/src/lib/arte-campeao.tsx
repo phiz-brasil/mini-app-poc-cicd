@@ -17,10 +17,25 @@ export type DadosCampeao = {
 const A = (f: string) => readFile(path.join(process.cwd(), "assets-og", f));
 const L = "#C6F432", P = "#111111";
 
+/** Só https para hosts públicos — avatar vem de perfil (input externo), e o
+ *  fetch é server-side: sem isso, vira SSRF contra a própria Vercel (CodeQL). */
+function urlExternaSegura(s: string): URL | null {
+  let u: URL;
+  try { u = new URL(s); } catch { return null; }
+  if (u.protocol !== "https:") return null;
+  const h = u.hostname.toLowerCase();
+  if (h === "localhost" || h.endsWith(".internal") || h.endsWith(".local") ||
+      /^(127\.|0\.|10\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(h) ||
+      h === "[::1]" || h === "::1") return null;
+  return u;
+}
+
 async function foto(url?: string): Promise<string | null> {
   if (!url) return null;
+  const alvo = urlExternaSegura(url);
+  if (!alvo) return null;
   try {
-    const r = await fetch(url, { signal: AbortSignal.timeout(6000) });
+    const r = await fetch(alvo, { signal: AbortSignal.timeout(6000) });
     if (!r.ok) return null;
     return `data:${r.headers.get("content-type") || "image/jpeg"};base64,` + Buffer.from(await r.arrayBuffer()).toString("base64");
   } catch { return null; }

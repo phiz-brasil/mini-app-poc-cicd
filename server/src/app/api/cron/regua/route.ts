@@ -17,7 +17,10 @@ const PASSOS = { "quase-faixa": quaseNaFaixa, "3-dias": tresDiasSemTreino, "7-di
 export async function GET(req: Request) {
   if (!process.env.CRON_SECRET || req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) return new Response("Proibido", { status: 403 });
   const q = new URL(req.url).searchParams;
-  const passo = q.get("passo") as keyof typeof PASSOS;
-  if (!PASSOS[passo]) return NextResponse.json({ ok: false, erro: "Passo desconhecido." }, { status: 400 });
+  const nome = q.get("passo") || "";
+  // hasOwn e não indexação direta: "__proto__" resolve no prototype e é truthy
+  // — o dispatch dinâmico só vale para chaves próprias de PASSOS (CodeQL).
+  if (!Object.hasOwn(PASSOS, nome)) return NextResponse.json({ ok: false, erro: "Passo desconhecido." }, { status: 400 });
+  const passo = nome as keyof typeof PASSOS;
   return NextResponse.json({ ok: true, passo, ...(await PASSOS[passo](q.get("so") || undefined, q.get("seco") === "1")) });
 }

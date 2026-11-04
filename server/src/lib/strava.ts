@@ -82,7 +82,9 @@ export async function conectar(uid: string, code: string): Promise<{ importados:
   await alterarBanco(b => {
     // Um atleta do Strava só pode estar ligado a uma pessoa.
     Object.values(b.usuarios).forEach(u => { if (u.strava?.athleteId === t.athlete!.id && u.id !== uid) delete u.strava; });
-    const u = b.usuarios[uid];
+    // hasOwn e não indexação direta: uid controlado por usuário não pode
+    // resolver para "__proto__"/"constructor" e poluir o prototype (CodeQL).
+    const u = Object.hasOwn(b.usuarios, uid) ? b.usuarios[uid] : undefined;
     if (!u) throw new Error("Usuário não encontrado.");
     u.strava = { athleteId: t.athlete!.id, accessToken: t.access_token, refreshToken: t.refresh_token, expiresAt: t.expires_at, conectadoEm: new Date().toISOString(), nome };
   });
