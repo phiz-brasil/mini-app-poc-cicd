@@ -24,10 +24,6 @@ permissions:
   security-events: write   # CodeQL e gitleaks publicam SARIF no Security tab
   actions: read
 
-env:
-  # Sonar só roda quando o secret SONAR_TOKEN existir (POC: começa desligado)
-  SONAR_ENABLED: ${{ secrets.SONAR_TOKEN != '' }}
-
 jobs:
   # ------------------------------------------------------------- regressão
   phiz-rules:
@@ -132,14 +128,19 @@ jobs:
   # ------------------------------------------------------------- Sonar
   sonar:
     name: quality / sonar
-    if: env.SONAR_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      # Sonar só roda quando o secret SONAR_TOKEN existir (POC: começa desligado).
+      # Gate em nível de step: `env` não é permitido em if de job.
+      SONAR_ENABLED: ${{ secrets.SONAR_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
+        if: env.SONAR_ENABLED == 'true'
         with:
           fetch-depth: 0   # Sonar usa o histórico para "new code"
       - uses: SonarSource/sonarqube-scan-action@v4
+        if: env.SONAR_ENABLED == 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       # O gate da organização é avaliado no SonarCloud; quando ativarmos o
