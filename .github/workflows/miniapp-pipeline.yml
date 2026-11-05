@@ -40,10 +40,12 @@ jobs:
       - run: bash tools/phiz-check/test/run-tests.sh
 
   # ------------------------------------------------------------- miniapp
+  # Pula quando não há código de app (branch vazia, teste do zero).
   miniapp:
     name: quality / miniapp
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    if: hashFiles('miniapp/**') != ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -56,6 +58,7 @@ jobs:
     name: quality / server
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    if: hashFiles('server/package.json') != ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -111,6 +114,7 @@ jobs:
     name: security / sca-server
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    if: hashFiles('server/package.json') != ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -136,11 +140,11 @@ jobs:
       SONAR_ENABLED: ${{ secrets.SONAR_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
-        if: env.SONAR_ENABLED == 'true'
+        if: env.SONAR_ENABLED == 'true' && hashFiles('miniapp/**', 'server/**') != ''
         with:
           fetch-depth: 0   # Sonar usa o histórico para "new code"
       - uses: SonarSource/sonarqube-scan-action@v6
-        if: env.SONAR_ENABLED == 'true'
+        if: env.SONAR_ENABLED == 'true' && hashFiles('miniapp/**', 'server/**') != ''
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       # O gate da organização é avaliado no SonarCloud; quando ativarmos o

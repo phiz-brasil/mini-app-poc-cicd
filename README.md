@@ -6,9 +6,14 @@ Repositório **público de propósito**: no plano GitHub Free, é em repo públi
 
 ## Layout
 
+> **Nota (05/11/2026):** branch `dev` sem código de app — reset para teste do zero.
+> Os jobs de app (miniapp, server, sca-server e o scan do Sonar) ficam desligados
+> enquanto `miniapp/` e `server/` não existirem, e religam sozinhos quando o
+> código chegar nesses caminhos.
+
 ```
-miniapp/              app Tá Pago! (formato nativo: app.json + pages/*.pxml + pz.*)
-server/               BFF do app (Next.js/TS na Vercel)
+miniapp/              app (formato nativo: app.json + pages/*.pxml + pz.*)
+server/               BFF do app (Next.js/TS)
 tools/phiz-check/     regras da casa ("phiz:check") + regressão com mutações ruins
 .github/workflows/    a esteira (miniapp-pipeline.yml)
 sonar-project.properties

@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFA14F"/><stop offset="1" stop-color="#F06400"/></linearGradient></defs>
-    <path d="M40.08 27.599999999999994 L199.92000000000002 27.599999999999994 L199.92000000000002 111.84 C199.92000000000002 168 163.2 198.24 120 215.52 C76.8 198.24 40.08 168 40.08 111.84 Z" fill="#111"/>
-    <path d="M46 40 L194 40 L194 118 C194 170 160 198 120 214 C80 198 46 170 46 118 Z" fill="url(#g)"/>
-    <path d="M60.8 52 L179.2 52 L179.2 114.4 C179.2 156 152 178.4 120 191.2 C88 178.4 60.8 156 60.8 114.4 Z" fill="none" stroke="#111" stroke-opacity=".2" stroke-width="3"/>
-    <g fill="#111" opacity=".55"><circle cx="62" cy="56" r="5"/><circle cx="178" cy="56" r="5"/><circle cx="62" cy="128" r="5"/><circle cx="178" cy="128" r="5"/></g>
-    <g fill="none" stroke="#111" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M86 112 L120 90 L154 112"/><path d="M86 142 L120 120 L154 142"/><path d="M86 172 L120 150 L154 172"/>
-    </g></svg>

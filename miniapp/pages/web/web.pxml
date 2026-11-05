@@ -1,4 +1,0 @@
-<!-- Só pra conexões de fora (Strava). Usa a barra nativa do PhizChat (com voltar): o resto do app é
-     navigationStyle "custom", mas o web-view cobre a tela e esconderia o botão de voltar.
-     bindload/binderror: registram no servidor o que abriu e o que travou (diagnóstico do domínio). -->
-<web-view src="{{src}}" bindload="carregou" binderror="falhou"></web-view>
