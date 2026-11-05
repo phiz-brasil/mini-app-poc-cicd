@@ -40,37 +40,40 @@ jobs:
       - run: bash tools/phiz-check/test/run-tests.sh
 
   # ------------------------------------------------------------- miniapp
-  # Pula quando não há código de app (branch vazia, teste do zero).
+  # Passos guardados: sem código de app, o job termina "verde e ocioso".
   miniapp:
     name: quality / miniapp
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: hashFiles('miniapp/**') != ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - run: node tools/phiz-check/phiz-check.js miniapp --profile miniapp
+        if: hashFiles('miniapp/**') != ''
 
   # ------------------------------------------------------------- server
   server:
     name: quality / server
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: hashFiles('server/package.json') != ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
+        if: hashFiles('server/package.json') != ''
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: server/package-lock.json
       - run: npm ci
+        if: hashFiles('server/package.json') != ''
         working-directory: server
       - run: npm run typecheck
+        if: hashFiles('server/package.json') != ''
         working-directory: server
       - run: node tools/phiz-check/phiz-check.js server --profile server
+        if: hashFiles('server/package.json') != ''
 
   # ------------------------------------------------------------- SAST
   codeql:
@@ -114,19 +117,21 @@ jobs:
     name: security / sca-server
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: hashFiles('server/package.json') != ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
+        if: hashFiles('server/package.json') != ''
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: server/package-lock.json
       - run: npm ci
+        if: hashFiles('server/package.json') != ''
         working-directory: server
       # Política RFC: critical/high = BLOCK, medium = WARN. npm audit não
       # separa os dois níveis; na POC o BLOCK começa em high.
       - run: npm audit --audit-level=high
+        if: hashFiles('server/package.json') != ''
         working-directory: server
 
   # ------------------------------------------------------------- Sonar
