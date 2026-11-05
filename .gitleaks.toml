@@ -1,0 +1,9 @@
+# Regras do gitleaks nesta esteira: padrões padrão + allowlist do que é fake de propósito.
+[extend]
+useDefault = true
+
+[allowlist]
+  # Fixtures de mutação ruim do phiz:check contêm secrets fake de propósito
+  # (são o teste da própria esteira — ver tools/phiz-check/test/).
+  description = "fixtures de regressão do phiz:check"
+  paths = ['''tools/phiz-check/test/fixtures/''']

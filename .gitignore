@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.local
+.env.production
+.env.development
+!.env.example
+.next/
+coverage/
+*.sarif
+gitleaks
+gitleaks.tar.gz
