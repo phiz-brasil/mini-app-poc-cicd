@@ -139,7 +139,7 @@ jobs:
         if: env.SONAR_ENABLED == 'true'
         with:
           fetch-depth: 0   # Sonar usa o histórico para "new code"
-      - uses: SonarSource/sonarqube-scan-action@v4
+      - uses: SonarSource/sonarqube-scan-action@v6
         if: env.SONAR_ENABLED == 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
