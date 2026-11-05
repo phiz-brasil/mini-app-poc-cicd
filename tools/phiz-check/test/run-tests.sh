@@ -25,8 +25,18 @@ espera_passagem() { # $1 desc, $2 dir, $3 profile
 }
 
 echo "— exemplos reais (devem passar) —"
-espera_passagem "miniapp tapago" "../../../miniapp" miniapp
-espera_passagem "server tapago"  "../../../server"  server
+# Exemplos reais = o código de app da própria branch. Sem miniapp/ ou server/
+# (teste do zero), o exemplo é indisponível e não conta como falha.
+if [ -d "../../../miniapp" ]; then
+  espera_passagem "miniapp tapago" "../../../miniapp" miniapp
+else
+  echo "—    (sem miniapp/ na branch — exemplo real indisponível)"
+fi
+if [ -d "../../../server" ]; then
+  espera_passagem "server tapago"  "../../../server"  server
+else
+  echo "—    (sem server/ na branch — exemplo real indisponível)"
+fi
 
 echo "— mutações ruins (devem falhar) —"
 espera_bloqueio "secret no cliente"     "$FIX/miniapp-bad-secret"    miniapp
